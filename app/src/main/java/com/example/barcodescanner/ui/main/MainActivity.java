@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
+
 import com.example.barcodescanner.R;
 import com.example.barcodescanner.databinding.ActivityMainBinding;
 import com.example.barcodescanner.ui.base.BaseActivity;
-import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends BaseActivity {
     ActivityMainBinding mBinding;
@@ -25,28 +26,56 @@ public class MainActivity extends BaseActivity {
 
     private void setupView() {
         bindView();
-        setupViewPager();
+        setupViewPagerAndBottomNav();
     }
 
     MainFragmentAdapter mMainFragmentAdapter = new MainFragmentAdapter(
-            getSupportFragmentManager(), this);
+            getSupportFragmentManager());
 
-    private void setupViewPager() {
-        mBinding.mViewPager.setAdapter(mMainFragmentAdapter);
-        mBinding.mTabLayout.setupWithViewPager(mBinding.mViewPager);
-        setCustomTabLayoutIcon();
+    private void setupViewPagerAndBottomNav() {
+        mBinding.viewPager.setAdapter(mMainFragmentAdapter);
+        mBinding.viewPager.setOnPageChangeListener(
+                new OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        int itemMenuId = mapToBottomNavItemMenuId(position);
+                        mBinding.navBottom.setSelectedItemId(itemMenuId);
+                    }
+
+                    private int mapToBottomNavItemMenuId(int selectedViewPagerPos) {
+                        switch (selectedViewPagerPos) {
+                            case 0: return R.id.menu_item_history;
+                            case 1: return R.id.menu_item_scan;
+                            default: return R.id.menu_item_settings;
+                        }
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                }
+        );
+        mBinding.navBottom.setOnNavigationItemSelectedListener(
+                item -> {
+                    mBinding.viewPager.setCurrentItem(
+                            mapToViewPagerPos(item.getItemId())
+                    );
+                    return true;
+                }
+        );
     }
 
-    private void setCustomTabLayoutIcon() {
-        int []iconResIds = new int[]{
-                R.drawable.ic_history,
-                R.drawable.ic_scan,
-                R.drawable.ic_settings
-        };
-        for (int i = 0; i < mBinding.mTabLayout.getTabCount(); i++) {
-            TabLayout.Tab tab = mBinding.mTabLayout.getTabAt(i);
-            tab.setCustomView(R.layout.customer_tab);
-            tab.setIcon(iconResIds[i]);
+    private int mapToViewPagerPos(int itemId) {
+        switch (itemId) {
+            case R.id.menu_item_history: return 0;
+            case R.id.menu_item_scan: return 1;
+            default: return 2;
         }
     }
 

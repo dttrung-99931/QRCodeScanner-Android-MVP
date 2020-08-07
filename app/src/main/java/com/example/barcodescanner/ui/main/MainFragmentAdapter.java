@@ -1,6 +1,7 @@
 package com.example.barcodescanner.ui.main;
 
 import android.content.Context;
+import android.location.SettingInjectorService;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,7 +10,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.barcodescanner.R;
+import com.example.barcodescanner.ui.main.history.HistoryFragment;
 import com.example.barcodescanner.ui.main.scan.ScanFragment;
+import com.example.barcodescanner.ui.main.setting.SettingFragment;
 
 
 /**
@@ -17,18 +20,17 @@ import com.example.barcodescanner.ui.main.scan.ScanFragment;
  */
 class MainFragmentAdapter extends FragmentStatePagerAdapter {
 
-    private final Context mContext;
-
-    public MainFragmentAdapter(@NonNull FragmentManager fm, Context context) {
+    public MainFragmentAdapter(@NonNull FragmentManager fm) {
         super(fm);
-        mContext = context;
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            default: return new ScanFragment();
+            case 0: return new HistoryFragment();
+            case 1: return new ScanFragment();
+            default: return new SettingFragment();
         }
     }
 
@@ -37,14 +39,4 @@ class MainFragmentAdapter extends FragmentStatePagerAdapter {
         return 3;
     }
 
-//    @Nullable
-//    @Override
-//    public CharSequence getPageTitle(int position) {
-//        switch (position) {
-//            case 0: return mContext.getString(R.string.title_history);
-//            case 1: return mContext.getString(R.string.title_scan);
-//            case 2: return mContext.getString(R.string.title_settings);
-//        }
-//        return super.getPageTitle(position);
-//    }
 }

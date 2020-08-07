@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background">
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/mViewPager"
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/mTabLayout" />
+        android:layout_above="@id/nav_bottom" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/mTabLayout"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bottom"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_45sdp"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/menu_main"
+        android:background="@color/background" />
 
 </RelativeLayout>
