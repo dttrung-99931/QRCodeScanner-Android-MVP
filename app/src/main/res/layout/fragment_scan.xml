@@ -7,11 +7,11 @@
     <FrameLayout
         android:id="@+id/layout_detection_view"
         android:layout_width="@dimen/_300sdp"
-        android:layout_height="@dimen/_300sdp"
-        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_height="@dimen/_320sdp"
+        android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/_20sdp"
-        android:layout_marginEnd="@dimen/_20sdp"
-        android:layout_centerHorizontal="true">
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp">
 
         <androidx.camera.view.PreviewView
             android:id="@+id/cameraPreview"
@@ -22,7 +22,7 @@
             android:id="@+id/imvDetectedBarCode"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <com.example.barcodescanner.ui.main.scan.GraphicOverlay
             android:id="@+id/bar_code_detection_view"
@@ -31,49 +31,56 @@
             android:background="@android:color/transparent" />
 
         <LinearLayout
-            android:id="@+id/layout_camera_control"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="@dimen/_5sdp">
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/btnTurnCamera"
+            <LinearLayout
+                android:id="@+id/layout_camera_control"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_turn_camera"
-                android:background="@null"
-                android:padding="@dimen/_5sdp"
-                android:scaleType="fitXY"/>
+                android:layout_gravity="center_horizontal">
 
-            <ImageButton
-                android:id="@+id/btnFlash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_flash_on"
-                android:background="@null"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:padding="@dimen/_5sdp"
-                android:scaleType="fitXY"/>
+                <ImageButton
+                    android:id="@+id/btnTurnCamera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:padding="@dimen/_5sdp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_turn_camera" />
+
+                <ImageButton
+                    android:id="@+id/btnFlash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:background="@null"
+                    android:padding="@dimen/_5sdp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_flash_on" />
+
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/zoom_seek_bar"
+                style="@style/ZoomSearchBar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_22sdp"
+                android:layout_gravity="bottom"
+                android:layout_marginHorizontal="@dimen/_24sdp"
+                android:max="200"
+                android:maxHeight="@dimen/_5sdp"
+                android:minHeight="@dimen/_5sdp"
+                android:paddingVertical="@dimen/_3sdp"
+                android:progress="0"
+                android:progressTint="@android:color/holo_purple"
+                android:thumb="@null" />
 
         </LinearLayout>
 
     </FrameLayout>
-
-    <SeekBar
-        android:id="@+id/zoom_seek_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginHorizontal="@dimen/_24sdp"
-        android:max="200"
-        android:progress="0"
-        android:paddingVertical="@dimen/_3sdp"
-        android:progressTint="@android:color/holo_purple"
-        android:thumb="@null"
-        android:layout_gravity="bottom"
-        style="@style/ZoomSearchBar"
-        android:minHeight="@dimen/_5sdp"
-        android:maxHeight="@dimen/_5sdp"
-        android:layout_below="@id/layout_detection_view"/>
 
 </RelativeLayout>

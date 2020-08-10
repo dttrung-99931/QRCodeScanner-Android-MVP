@@ -296,15 +296,15 @@ public class GraphicOverlay extends View {
         // Draw the bottom right
         path.moveTo(
                 getRight() - mScanFrameSize,
-                getBottom() - mScanFrameSize - mSquareMarkSize
+                getBottom() - mScanFrameSize*3/2 - mSquareMarkSize
         );
         path.lineTo(
                 getRight() - mScanFrameSize,
-                getBottom() - mScanFrameSize
+                getBottom() - mScanFrameSize*3/2
         );
         path.lineTo(
                 getRight() - mScanFrameSize - mSquareMarkSize,
-                getBottom() - mScanFrameSize
+                getBottom() - mScanFrameSize*3/2
         );
         canvas.drawPath(path, mSquareMarkPaint);
         path.reset();
@@ -322,15 +322,15 @@ public class GraphicOverlay extends View {
         // Draw the bottom left
         path.moveTo(
                 getLeft() + mScanFrameSize,
-                getBottom() - mScanFrameSize - mSquareMarkSize
+                getBottom() - mScanFrameSize*3/2 - mSquareMarkSize
         );
         path.lineTo(
                 getLeft() + mScanFrameSize,
-                getBottom() - mScanFrameSize
+                getBottom() - mScanFrameSize*3/2
         );
         path.lineTo(
                 getLeft() + mScanFrameSize + mSquareMarkSize,
-                getBottom() - mScanFrameSize
+                getBottom() - mScanFrameSize*3/2
         );
         canvas.drawPath(path, mSquareMarkPaint);
         path.reset();
@@ -354,7 +354,7 @@ public class GraphicOverlay extends View {
         );
         // Draw the bottom rect
         canvas.drawRect(
-                getLeft(), getBottom() - mScanFrameSize,
+                getLeft(), getBottom() - mScanFrameSize*3/2,
                 getRight(), getBottom(),
                 mScanFramePaint
         );
@@ -369,13 +369,13 @@ public class GraphicOverlay extends View {
         // Draw the left rect
         canvas.drawRect(
                 getLeft(), getTop() + mScanFrameSize,
-                getLeft() + mScanFrameSize, getBottom() - mScanFrameSize,
+                getLeft() + mScanFrameSize, getBottom() - mScanFrameSize*3/2,
                 mScanFramePaint
         );
         // Draw the left rect
         canvas.drawRect(
                 getRight() - mScanFrameSize, getTop() + mScanFrameSize,
-                getRight(), getBottom() - mScanFrameSize,
+                getRight(), getBottom() - mScanFrameSize*3/2,
                 mScanFramePaint
         );
 
