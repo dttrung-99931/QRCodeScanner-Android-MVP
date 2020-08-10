@@ -30,18 +30,50 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent" />
 
-        <SeekBar
-            android:id="@+id/seek_bar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_marginHorizontal="@dimen/_24sdp"
-            android:max="200"
-            android:progress="20"
-            android:paddingVertical="@dimen/_3sdp"
-            android:progressTint="@android:color/holo_purple"
-            android:thumb="@null"
-            android:layout_gravity="bottom"/>
+        <LinearLayout
+            android:id="@+id/layout_camera_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/_5sdp">
+
+            <ImageButton
+                android:id="@+id/btnTurnCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_turn_camera"
+                android:background="@null"
+                android:padding="@dimen/_5sdp"
+                android:scaleType="fitXY"/>
+
+            <ImageButton
+                android:id="@+id/btnFlash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_flash_on"
+                android:background="@null"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:padding="@dimen/_5sdp"
+                android:scaleType="fitXY"/>
+
+        </LinearLayout>
 
     </FrameLayout>
+
+    <SeekBar
+        android:id="@+id/zoom_seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginHorizontal="@dimen/_24sdp"
+        android:max="200"
+        android:progress="0"
+        android:paddingVertical="@dimen/_3sdp"
+        android:progressTint="@android:color/holo_purple"
+        android:thumb="@null"
+        android:layout_gravity="bottom"
+        style="@style/ZoomSearchBar"
+        android:minHeight="@dimen/_5sdp"
+        android:maxHeight="@dimen/_5sdp"
+        android:layout_below="@id/layout_detection_view"/>
 
 </RelativeLayout>

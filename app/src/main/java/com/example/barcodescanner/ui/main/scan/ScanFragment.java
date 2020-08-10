@@ -17,13 +17,16 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.CameraX;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.core.content.ContextCompat;
 
+import com.example.barcodescanner.R;
 import com.example.barcodescanner.databinding.FragmentScanBinding;
 import com.example.barcodescanner.ui.base.BaseFragment;
 import com.example.barcodescanner.ui.main.MainActivity;
@@ -45,6 +48,10 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
 
     private FragmentScanBinding mBinding;
     private BarcodeDetector mBarCodeDetector;
+    private CameraControl mCameraControl;
+    private boolean mIsFlashOn = false;
+    private ProcessCameraProvider mCameraProvider;
+    private CameraSelector mCameraSelector;
 
     @Nullable
     @Override
@@ -65,11 +72,18 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
         setupViews();
     }
 
+    @SuppressLint("RestrictedApi")
     private void setupViews() {
-        mBinding.seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        setupZoomSeekBar();
+        setupBtnFlash();
+        setupBtnTurnCamera();
+    }
+
+    private void setupZoomSeekBar() {
+        mBinding.zoomSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+                mCameraControl.setLinearZoom((float)progress/200);
             }
 
             @Override
@@ -81,6 +95,32 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
             public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
+        });
+    }
+
+    private void setupBtnFlash() {
+        mBinding.btnFlash.setOnClickListener(v -> {
+            if (mIsFlashOn) {
+                mBinding.btnFlash.setImageResource(R.drawable.ic_flash_off);
+            }else {
+                mBinding.btnFlash.setImageResource(R.drawable.ic_flash_on);
+            }
+            mIsFlashOn = !mIsFlashOn;
+            mCameraControl.enableTorch(mIsFlashOn);
+        });
+
+    }
+
+
+    private void setupBtnTurnCamera() {
+        mBinding.btnTurnCamera.setOnClickListener(v -> {
+            if (mCameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
+            } else {
+                mCameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+            }
+            mCameraProvider.unbindAll();
+            subscribeCameraPreviewAndAnalysis(mCameraSelector);
         });
     }
 
@@ -100,7 +140,7 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
 
     private void processSubscribingCameraPreviewAndAnalysis() {
         if (isCameraPermissionGranted()) {
-            subscribeCameraPreviewAndAnalysis();
+            subscribeCameraPreviewAndAnalysis(CameraSelector.DEFAULT_BACK_CAMERA);
         } else requestCameraPermission();
     }
 
@@ -123,13 +163,13 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void subscribeCameraPreviewAndAnalysis() {
-        ListenableFuture<ProcessCameraProvider> cameraSubscriber =
-                ProcessCameraProvider.getInstance(requireContext());
+    private void subscribeCameraPreviewAndAnalysis(CameraSelector cameraSelector) {
+        ListenableFuture<ProcessCameraProvider> cameraSubscriber
+                = ProcessCameraProvider.getInstance(requireContext());
 
         cameraSubscriber.addListener(() -> {
                     try {
-                        setupCameraForPreviewAndAnalysis(cameraSubscriber);
+                        setupCameraForPreviewAndAnalysis(cameraSubscriber, cameraSelector);
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -137,30 +177,34 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
         );
     }
 
+    @SuppressLint("RestrictedApi")
     private void setupCameraForPreviewAndAnalysis(
-            ListenableFuture<ProcessCameraProvider> cameraSubscriber)
+            ListenableFuture<ProcessCameraProvider> cameraSubscriber, CameraSelector cameraSelector)
             throws ExecutionException, InterruptedException {
         // used to the activity lifecycle to the lifecycle of camera
-        ProcessCameraProvider cameraProvider = cameraSubscriber.get();
+        mCameraProvider = cameraSubscriber.get();
 
         // attach the cameraPreview to the preview
-        Preview preview = new Preview
+        Preview mCameraPreview = new Preview
                 .Builder()
                 .build();
-        preview.setSurfaceProvider(
+        mCameraPreview.setSurfaceProvider(
                 mBinding.cameraPreview.createSurfaceProvider()
         );
 
-        ImageAnalysis analyzer = new ImageAnalysis.Builder()
+        ImageAnalysis mCameraAnalyzer = new ImageAnalysis.Builder()
                 .build();
-        analyzer.setAnalyzer(
+        mCameraAnalyzer.setAnalyzer(
                 ContextCompat.getMainExecutor(requireContext()),
                 this);
 
-        CameraSelector selector = CameraSelector.DEFAULT_BACK_CAMERA;
-        cameraProvider.unbindAll();
-        cameraProvider.bindToLifecycle(this,
-                selector, preview, analyzer);
+        mCameraSelector = cameraSelector;
+        mCameraControl = CameraX.getCameraWithCameraSelector(mCameraSelector)
+                .getCameraControl();
+
+        mCameraProvider.unbindAll();
+        mCameraProvider.bindToLifecycle(this,
+                cameraSelector, mCameraPreview, mCameraAnalyzer);
     }
 
     private boolean mIsShowingResult = false;
