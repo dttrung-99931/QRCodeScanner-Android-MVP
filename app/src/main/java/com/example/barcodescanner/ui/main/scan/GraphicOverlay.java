@@ -3,9 +3,13 @@ package com.example.barcodescanner.ui.main.scan;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.core.content.ContextCompat;
+
+import com.example.barcodescanner.R;
 import com.google.android.gms.vision.CameraSource;
 
 import java.util.ArrayList;
@@ -38,7 +42,8 @@ public class GraphicOverlay extends View {
     private float heightScaleFactor = 1.0f;
     private int facing = CameraSource.CAMERA_FACING_BACK;
     private final List<Graphic> graphics = new ArrayList<>();
-    private Paint mPaint;
+    private Paint mDetectionPaint, mScanFramePaint, mSquareMarkPaint;
+    private int mScanFrameSize, mSquareMarkSize, mSquareMarkStrokeWidth;
 
     public void removeAllWithoutInvalidate() {
         synchronized (lock) {
@@ -87,12 +92,16 @@ public class GraphicOverlay extends View {
             return horizontal * overlay.widthScaleFactor;
         }
 
-        /** Adjusts a vertical value of the supplied value from the preview scale to the view scale. */
+        /**
+         * Adjusts a vertical value of the supplied value from the preview scale to the view scale.
+         */
         public float scaleY(float vertical) {
             return vertical * overlay.heightScaleFactor;
         }
 
-        /** Returns the application context of the app. */
+        /**
+         * Returns the application context of the app.
+         */
         public Context getApplicationContext() {
             return overlay.getContext().getApplicationContext();
         }
@@ -126,9 +135,37 @@ public class GraphicOverlay extends View {
 
     public GraphicOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
-    /** Removes all graphics from the overlay. */
+    private void init() {
+        initScanFramePaint();
+        initSquareMarksGraphic();
+    }
+
+    private void initSquareMarksGraphic() {
+        mSquareMarkStrokeWidth = getResources().getDimensionPixelSize(R.dimen._5sdp);
+        mSquareMarkSize = getResources().getDimensionPixelSize(R.dimen._22sdp);
+
+        mSquareMarkPaint = new Paint();
+        mSquareMarkPaint.setColor(
+                ContextCompat.getColor(getContext(), android.R.color.holo_purple)
+        );
+        mSquareMarkPaint.setStrokeWidth(mSquareMarkStrokeWidth);
+        mSquareMarkPaint.setStyle(Paint.Style.STROKE);
+    }
+
+    private void initScanFramePaint() {
+        mScanFramePaint = new Paint();
+        mScanFramePaint.setColor(
+                ContextCompat.getColor(getContext(), R.color.backgroundScanFrame)
+        );
+        mScanFramePaint.setStyle(Paint.Style.FILL);
+    }
+
+    /**
+     * Removes all graphics from the overlay.
+     */
     public void clear() {
         synchronized (lock) {
             graphics.clear();
@@ -136,14 +173,18 @@ public class GraphicOverlay extends View {
         postInvalidate();
     }
 
-    /** Adds a graphic to the overlay. */
+    /**
+     * Adds a graphic to the overlay.
+     */
     public void add(Graphic graphic) {
         synchronized (lock) {
             graphics.add(graphic);
         }
     }
 
-    /** Removes a graphic from the overlay. */
+    /**
+     * Removes a graphic from the overlay.
+     */
     public void remove(Graphic graphic) {
         synchronized (lock) {
             graphics.remove(graphic);
@@ -164,11 +205,17 @@ public class GraphicOverlay extends View {
         postInvalidate();
     }
 
-    /** Draws the overlay with its associated graphic objects. */
+    /**
+     * Draws the overlay with its associated graphic objects.
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        mScanFrameSize = (int) (((getWidth() + getHeight()) / 2) * 0.15);
+
+        drawScanFrame(canvas);
+        drawSquareMarks(canvas);
         synchronized (lock) {
             if ((previewWidth != 0) && (previewHeight != 0)) {
                 widthScaleFactor = (float) getWidth() / previewWidth;
@@ -181,11 +228,164 @@ public class GraphicOverlay extends View {
         }
     }
 
+    /**
+     * Draw the shape marked by dots
+     * ************
+     * *..******..*
+     * *.        .*
+     * **        **
+     * *.        .*
+     * *..******..*
+     * ************
+     */
+    private void drawSquareMarks(Canvas canvas) {
+        Path path = new Path();
+
+        // Draw the top left
+        path.moveTo(
+                getLeft() + mScanFrameSize,
+                getTop() + mScanFrameSize + mSquareMarkSize
+        );
+        path.lineTo(
+                getLeft() + mScanFrameSize,
+                getTop() + mScanFrameSize
+        );
+        path.lineTo(
+                getLeft() + mScanFrameSize + mSquareMarkSize,
+                getTop() + mScanFrameSize
+        );
+        canvas.drawPath(path, mSquareMarkPaint);
+        path.reset();
+
+        /**
+         * Draw the shape marked by dots
+         * ************
+         * *..******..*
+         * *.        .*
+         * **        **
+         * *.        .*
+         * *..******..*
+         * ************
+         */
+        // Draw the top right
+        path.moveTo(
+                getRight() - mScanFrameSize,
+                getTop() + mScanFrameSize + mSquareMarkSize
+        );
+        path.lineTo(
+                getRight() - mScanFrameSize,
+                getTop() + mScanFrameSize
+        );
+        path.lineTo(
+                getRight() - mScanFrameSize - mSquareMarkSize,
+                getTop() + mScanFrameSize
+        );
+        canvas.drawPath(path, mSquareMarkPaint);
+        path.reset();
+
+/**
+         * Draw the shape marked by dots
+         * ************
+         * *..******..*
+         * *.        .*
+         * **        **
+         * *.        .*
+         * *..******..*
+         * ************
+         */
+        // Draw the bottom right
+        path.moveTo(
+                getRight() - mScanFrameSize,
+                getBottom() - mScanFrameSize - mSquareMarkSize
+        );
+        path.lineTo(
+                getRight() - mScanFrameSize,
+                getBottom() - mScanFrameSize
+        );
+        path.lineTo(
+                getRight() - mScanFrameSize - mSquareMarkSize,
+                getBottom() - mScanFrameSize
+        );
+        canvas.drawPath(path, mSquareMarkPaint);
+        path.reset();
+
+/**
+         * Draw the shape marked by dots
+         * ************
+         * *..******..*
+         * *.        .*
+         * **        **
+         * *.        .*
+         * *..******..*
+         * ************
+         */
+        // Draw the bottom left
+        path.moveTo(
+                getLeft() + mScanFrameSize,
+                getBottom() - mScanFrameSize - mSquareMarkSize
+        );
+        path.lineTo(
+                getLeft() + mScanFrameSize,
+                getBottom() - mScanFrameSize
+        );
+        path.lineTo(
+                getLeft() + mScanFrameSize + mSquareMarkSize,
+                getBottom() - mScanFrameSize
+        );
+        canvas.drawPath(path, mSquareMarkPaint);
+        path.reset();
+    }
+
+    /**
+     * Draw the frame like that
+     * ********
+     * ********
+     * **    **
+     * **    **
+     * ********
+     * ********
+     */
+    private void drawScanFrame(Canvas canvas) {
+        // Draw the top rect
+        canvas.drawRect(
+                getLeft(), getTop(),
+                getRight(), getTop() + mScanFrameSize,
+                mScanFramePaint
+        );
+        // Draw the bottom rect
+        canvas.drawRect(
+                getLeft(), getBottom() - mScanFrameSize,
+                getRight(), getBottom(),
+                mScanFramePaint
+        );
+//        /*
+//         * ********
+//         * ********
+//         * **    **
+//         * **    **
+//         * ********
+//         * ********
+//         */
+        // Draw the left rect
+        canvas.drawRect(
+                getLeft(), getTop() + mScanFrameSize,
+                getLeft() + mScanFrameSize, getBottom() - mScanFrameSize,
+                mScanFramePaint
+        );
+        // Draw the left rect
+        canvas.drawRect(
+                getRight() - mScanFrameSize, getTop() + mScanFrameSize,
+                getRight(), getBottom() - mScanFrameSize,
+                mScanFramePaint
+        );
+
+    }
+
     public Paint getPaint() {
-        return mPaint;
+        return mDetectionPaint;
     }
 
     public void setPaint(Paint mPaint) {
-        this.mPaint = mPaint;
+        this.mDetectionPaint = mPaint;
     }
 }

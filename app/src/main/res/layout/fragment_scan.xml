@@ -6,11 +6,12 @@
 
     <FrameLayout
         android:id="@+id/layout_detection_view"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_400sdp"
+        android:layout_width="@dimen/_300sdp"
+        android:layout_height="@dimen/_300sdp"
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_marginStart="@dimen/_20sdp"
-        android:layout_marginEnd="@dimen/_20sdp">
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_centerHorizontal="true">
 
         <androidx.camera.view.PreviewView
             android:id="@+id/cameraPreview"
@@ -29,16 +30,18 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent" />
 
-    </FrameLayout>
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            android:max="200"
+            android:progress="20"
+            android:paddingVertical="@dimen/_3sdp"
+            android:progressTint="@android:color/holo_purple"
+            android:thumb="@null"
+            android:layout_gravity="bottom"/>
 
-    <SeekBar
-        android:id="@+id/seek_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_35sdp"
-        android:layout_below="@id/layout_detection_view"
-        android:layout_marginHorizontal="@dimen/_9sdp"
-        android:max="100"
-        android:progress="0"
-        android:paddingVertical="@dimen/_3sdp" />
+    </FrameLayout>
 
 </RelativeLayout>
