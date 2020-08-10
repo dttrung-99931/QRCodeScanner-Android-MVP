@@ -2,6 +2,7 @@ package com.example.barcodescanner.ui.base;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Window;
 
@@ -23,6 +24,17 @@ public class BaseDialogFragment extends DialogFragment implements BaseView{
     private boolean isBackgroundTransparent;
 
     public BaseDialogFragment() {
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        setStyle(STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar);
+        dialog.getWindow().setBackgroundDrawableResource(
+                android.R.color.transparent
+        );
+        return dialog;
     }
 
     @Override
@@ -61,16 +73,6 @@ public class BaseDialogFragment extends DialogFragment implements BaseView{
 
     public BaseActivity getBaseActivity() {
         return mBaseActivity;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        final Dialog dialog = new Dialog(getContext());
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.getWindow().setLayout(MATCH_PARENT, MATCH_PARENT);
-        dialog.setCanceledOnTouchOutside(false);
-        return dialog;
     }
 
     public boolean isBackgroundTransparent() {

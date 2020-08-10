@@ -3,12 +3,19 @@ package com.example.barcodescanner.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.SparseArray;
 
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
+import androidx.fragment.app.Fragment;
 
 import com.example.barcodescanner.R;
 import com.example.barcodescanner.databinding.ActivityMainBinding;
 import com.example.barcodescanner.ui.base.BaseActivity;
+import com.example.barcodescanner.ui.main.result.ResultFragment;
+import com.example.barcodescanner.ui.main.scan.ScanFragment;
+import com.example.barcodescanner.util.CommonUtil;
+import com.google.android.gms.common.internal.service.Common;
+import com.google.android.gms.vision.barcode.Barcode;
 
 public class MainActivity extends BaseActivity {
     ActivityMainBinding mBinding;
@@ -30,37 +37,13 @@ public class MainActivity extends BaseActivity {
     }
 
     MainFragmentAdapter mMainFragmentAdapter = new MainFragmentAdapter(
-            getSupportFragmentManager());
+            getSupportFragmentManager(), getLifecycle());
 
     private void setupViewPagerAndBottomNav() {
+        // Init selected scan fragment page
+        mBinding.navBottom.setSelectedItemId(R.id.menu_item_scan);
+
         mBinding.viewPager.setAdapter(mMainFragmentAdapter);
-        mBinding.viewPager.setOnPageChangeListener(
-                new OnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                    }
-
-                    @Override
-                    public void onPageSelected(int position) {
-                        int itemMenuId = mapToBottomNavItemMenuId(position);
-                        mBinding.navBottom.setSelectedItemId(itemMenuId);
-                    }
-
-                    private int mapToBottomNavItemMenuId(int selectedViewPagerPos) {
-                        switch (selectedViewPagerPos) {
-                            case 0: return R.id.menu_item_history;
-                            case 1: return R.id.menu_item_scan;
-                            default: return R.id.menu_item_settings;
-                        }
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-
-                    }
-                }
-        );
         mBinding.navBottom.setOnNavigationItemSelectedListener(
                 item -> {
                     mBinding.viewPager.setCurrentItem(
@@ -69,13 +52,21 @@ public class MainActivity extends BaseActivity {
                     return true;
                 }
         );
+
+        mBinding.viewPager.setCurrentItem(1);
+
+        // Disable view pager switch
+        mBinding.viewPager.setUserInputEnabled(false);
     }
 
     private int mapToViewPagerPos(int itemId) {
         switch (itemId) {
-            case R.id.menu_item_history: return 0;
-            case R.id.menu_item_scan: return 1;
-            default: return 2;
+            case R.id.menu_item_history:
+                return 0;
+            case R.id.menu_item_scan:
+                return 1;
+            default:
+                return 2;
         }
     }
 
@@ -83,4 +74,30 @@ public class MainActivity extends BaseActivity {
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
     }
+
+    public interface FragmentDismissCallBack {
+        void onFragmentDismiss();
+    }
+
+    private FragmentDismissCallBack mCallBack = () -> {
+        String curFragmentTagInViewPager =
+                "f" + mBinding.viewPager.getCurrentItem();
+        Fragment fragment = getSupportFragmentManager()
+                .findFragmentByTag(curFragmentTagInViewPager);
+        if (fragment instanceof ScanFragment) {
+            ((ScanFragment)fragment).resumeScanningWithDelay();
+        }
+    };
+
+    public void showBarcodeResultWithDelay(SparseArray<Barcode> detectedBarcodes) {
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            ResultFragment.show(
+                    detectedBarcodes,
+                    getSupportFragmentManager(),
+                    mCallBack
+            );
+        }, 300);
+    }
+
 }

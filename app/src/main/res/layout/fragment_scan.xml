@@ -1,23 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.MainActivity">
+    android:orientation="vertical">
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/cameraPreview"
+    <FrameLayout
+        android:id="@+id/layout_detection_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello World!"
-        android:layout_margin="20dp"/>
+        android:layout_height="@dimen/_400sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp">
 
-    <com.example.barcodescanner.ui.main.scan.GraphicOverlay
-        android:id="@+id/bar_code_detection_view"
+        <androidx.camera.view.PreviewView
+            android:id="@+id/cameraPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/imvDetectedBarCode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <com.example.barcodescanner.ui.main.scan.GraphicOverlay
+            android:id="@+id/bar_code_detection_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
+
+    </FrameLayout>
+
+    <SeekBar
+        android:id="@+id/seek_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/_20sdp"
-        android:background="@android:color/transparent"/>
-
+        android:layout_height="@dimen/_35sdp"
+        android:layout_below="@id/layout_detection_view"
+        android:layout_marginHorizontal="@dimen/_9sdp"
+        android:max="100"
+        android:progress="0"
+        android:paddingVertical="@dimen/_3sdp" />
 
 </RelativeLayout>
