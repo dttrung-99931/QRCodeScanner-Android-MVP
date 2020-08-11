@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Pair;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,33 +26,39 @@ import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.barcodescanner.R;
+import com.example.barcodescanner.data.model.BarCodeData;
 import com.example.barcodescanner.databinding.FragmentScanBinding;
 import com.example.barcodescanner.ui.base.BaseFragment;
-import com.example.barcodescanner.ui.main.MainActivity;
+import com.example.barcodescanner.ui.main.result.BarCodeFieldAdapter;
 import com.example.barcodescanner.util.CommonUtil;
+import com.example.barcodescanner.util.ViewUtil;
 import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Trung on 8/7/2020
  */
-public class ScanFragment extends BaseFragment implements ScanPresenter.View, ImageAnalysis.Analyzer {
+public class ScanFragment extends BaseFragment implements
+        ScanPresenter.View, ImageAnalysis.Analyzer {
 
     private static final int REQUEST_CODE_CAMERA_PERMISSION = 1;
 
     private FragmentScanBinding mBinding;
-    private BarcodeDetector mBarCodeDetector;
     private CameraControl mCameraControl;
     private boolean mIsFlashOn = false;
     private ProcessCameraProvider mCameraProvider;
     private CameraSelector mCameraSelector;
+
+    private ScanPresenter mPresenter;
 
     @Nullable
     @Override
@@ -77,13 +84,41 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
         setupZoomSeekBar();
         setupBtnFlash();
         setupBtnTurnCamera();
+        setupRecyclerViewBarcodeFields();
+        setupBtnRefresh();
+    }
+
+    private void setupBtnRefresh() {
+        mBinding.btnRefresh.setOnClickListener(v -> {
+            if (mIsShowingResult) {
+                resumeScanningWithDelay();
+                mIsShowingResult = false;
+            }
+        });
+    }
+
+    private void setCollapsingToolbarScrollFlags(int scrollFlagNoScroll) {
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams)
+                mBinding.collapsingToolbar.getLayoutParams();
+        params.setScrollFlags(scrollFlagNoScroll);
+    }
+
+    private BarCodeFieldAdapter mBarCodeFieldAdapter;
+
+    private void setupRecyclerViewBarcodeFields() {
+        mBarCodeFieldAdapter = new BarCodeFieldAdapter(
+                new ArrayList<>());
+        mBinding.recyclerViewBarCodeFields.setAdapter(mBarCodeFieldAdapter);
+        mBinding.recyclerViewBarCodeFields.setLayoutManager(
+                new LinearLayoutManager(requireContext())
+        );
     }
 
     private void setupZoomSeekBar() {
         mBinding.zoomSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mCameraControl.setLinearZoom((float)progress/200);
+                mCameraControl.setLinearZoom((float) progress / 200);
             }
 
             @Override
@@ -102,7 +137,7 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
         mBinding.btnFlash.setOnClickListener(v -> {
             if (mIsFlashOn) {
                 mBinding.btnFlash.setImageResource(R.drawable.ic_flash_off);
-            }else {
+            } else {
                 mBinding.btnFlash.setImageResource(R.drawable.ic_flash_on);
             }
             mIsFlashOn = !mIsFlashOn;
@@ -124,14 +159,16 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        mPresenter.onDetached();
+        super.onDestroyView();
+    }
+
     private void init() {
-        mBarCodeDetector = new BarcodeDetector
-                .Builder(requireContext())
-                .setBarcodeFormats(
-                        com.google.android.gms.vision.barcode.Barcode.DATA_MATRIX
-                                | Barcode.QR_CODE
-                )
-                .build();
+        mPresenter = new ScanPresenter();
+        mPresenter.onAttached(this);
+        mPresenter.initBarcodeDetector(requireContext().getApplicationContext());
 
         Paint paint = new Paint();
         paint.setColor(Color.RED);
@@ -213,50 +250,51 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
     @Override
     public void analyze(@NonNull ImageProxy image) {
         if (!mIsShowingResult) {
-            SparseArray<Barcode> detectedBarcodes =
-                    detectBarCodeAndShowDetection(image);
-            if (detectedBarcodes.size() != 0) {
-                mCurDetectedImageProxy = image;
-                MainActivity mainActi = (MainActivity) getBaseActivity();
-                mainActi.showBarcodeResultWithDelay(detectedBarcodes);
-            } else {  // If there is no detected barcode images
-                // Close to detect another frame
-                image.close();
-            }
+            @SuppressLint("UnsafeExperimentalUsageError")
+            Bitmap bitmap = CommonUtil.toBitmap(image.getImage());
+            mCurDetectedImageProxy = image;
+            mPresenter.detectBarcode(bitmap);
         }
     }
 
-    private SparseArray<Barcode> detectBarCodeAndShowDetection(ImageProxy image) {
-        @SuppressLint("UnsafeExperimentalUsageError")
-        Bitmap bitmap = CommonUtil.toBitmap(image.getImage());
-        Frame frame = new Frame.Builder()
-                .setBitmap(bitmap)
-                .build();
+    private void showDetectedBarcodeResult(Barcode barcode) {
+        mIsShowingResult = true;
+        mBinding.btnRefresh.setVisibility(View.VISIBLE);
+        mBinding.layoutResult.setVisibility(View.VISIBLE);
 
-        SparseArray<com.google.android.gms.vision.barcode.Barcode> detectedBarCodes
-                = mBarCodeDetector.detect(frame);
-        showBarCodeDetection(detectedBarCodes, bitmap);
-        return detectedBarCodes;
+        // Enable collapsing scroll when result is available
+        setCollapsingToolbarScrollFlags(
+                AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+        );
+
+        try {
+            /*Normally barcode has only one type, like: PHONE, EMAIL ...,
+             * if a barcode has many types then there will be many BarCodeData from the barcode */
+            List<BarCodeData> barCodeDataList = BarCodeData.listFromBarcode(
+                    barcode, requireContext()
+            );
+
+            /*Assume that barcode has only one type*/
+            BarCodeData firstBarCodeData = barCodeDataList.get(0);
+
+            mBinding.tvBarCodeType.setText(firstBarCodeData.getTypeName());
+            mBarCodeFieldAdapter.setBarCodeFields(
+                    firstBarCodeData.getBarCodeFields()
+            );
+            mBarCodeFieldAdapter.notifyDataSetChanged();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void showBarCodeDetection(
-            SparseArray<Barcode> detectedBarCodes, Bitmap bitmap) {
-
-        // Mark detection
-
-        if (detectedBarCodes.size() == 0) {
-            mBinding.barCodeDetectionView.removeAllAndInvalidate();
-            return;
-        }
-
-        setDetectionViewProperties(bitmap);
-
-        for (int i = 0; i < detectedBarCodes.size(); i++) {
-            int key = detectedBarCodes.keyAt(0);
-            BarCodeDetectionGraphic barCodeDetection = new BarCodeDetectionGraphic(
-                    mBinding.barCodeDetectionView, detectedBarCodes.get(key));
-            mBinding.barCodeDetectionView.add(barCodeDetection);
-        }
+    /*
+     * Show only one detected barcode that is in the scan area
+     * */
+    private void showBarCodeDetection(Barcode barcode) {
+        // Draw barcode detection on barCodeDetectionView
+        DetectionDrawer barCodeDetection = new DetectionDrawer(
+                mBinding.barCodeDetectionView, barcode);
+        mBinding.barCodeDetectionView.add(barCodeDetection);
         mBinding.barCodeDetectionView.postInvalidate();
 
         // Overlay the detected barcode imageView on the cameraPreview
@@ -276,8 +314,20 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
     }
 
     public void resumeScanningWithDelay() {
+        mBinding.btnRefresh.setVisibility(View.GONE);
+        mBinding.layoutResult.setVisibility(View.GONE);
+
+        // Disable collapsing scroll on scan
+        setCollapsingToolbarScrollFlags(
+                AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
+        );
+
         mBinding.imvDetectedBarCode.setVisibility(View.GONE);
         mBinding.barCodeDetectionView.clear();
+        closeDetectedImgProxyWithDelay();
+    }
+
+    private void closeDetectedImgProxyWithDelay() {
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             if (mCurDetectedImageProxy != null) {
@@ -285,5 +335,24 @@ public class ScanFragment extends BaseFragment implements ScanPresenter.View, Im
                 mCurDetectedImageProxy = null;
             }
         }, 300);
+    }
+
+    @Override
+    public void showBarcodeDetectionResult(Pair<Bitmap, SparseArray<Barcode>> result) {
+
+        Barcode barcodeInScanArea = ViewUtil.getOneDetectedBarCodeInScanArea(
+                result.second, mBinding.barCodeDetectionView.getScanBoundingBox()
+        );
+
+        if (barcodeInScanArea != null) {
+            setDetectionViewProperties(result.first);
+            showBarCodeDetection(barcodeInScanArea);
+            showDetectedBarcodeResult(barcodeInScanArea);
+        } else {  // If there is no detected barcode images
+            // Close to detect another frame
+            mCurDetectedImageProxy.close();
+            mBinding.barCodeDetectionView.removeAllAndInvalidate();
+        }
+
     }
 }

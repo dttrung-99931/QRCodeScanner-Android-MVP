@@ -9,9 +9,8 @@
         android:id="@+id/cardviewResult"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_15sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        app:cardCornerRadius="@dimen/_20sdp">
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_5sdp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -31,7 +30,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_3sdp"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY"
+                style="@style/ClickAnimStyle"/>
 
             <TextView
                 android:id="@+id/tvFieldName"
@@ -46,7 +46,7 @@
                 android:visibility="visible"/>
 
             <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvFieldName">
 

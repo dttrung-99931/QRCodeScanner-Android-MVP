@@ -80,7 +80,7 @@ public class ResultFragment extends BaseDialogFragment implements ResultPresente
             if (barCodeDataList.size() != 0) {
                 BarCodeData barCodeData = barCodeDataList.get(0);
                 mBinding.tvBarCodeType.setText(barCodeData.getTypeName());
-                setupAdapterBarcodeFields(barCodeData);
+                setupRecyclerViewBarcodeFields(barCodeData);
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -90,7 +90,7 @@ public class ResultFragment extends BaseDialogFragment implements ResultPresente
 
     private BarCodeFieldAdapter mBarCodeFieldAdapter;
 
-    private void setupAdapterBarcodeFields(BarCodeData barCodeData) {
+    private void setupRecyclerViewBarcodeFields(BarCodeData barCodeData) {
         mBarCodeFieldAdapter = new BarCodeFieldAdapter(
                 barCodeData.getBarCodeFields());
         mBinding.recyclerViewBarCodeFields.setAdapter(mBarCodeFieldAdapter);

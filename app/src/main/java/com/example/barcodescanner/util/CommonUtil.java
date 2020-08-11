@@ -1,5 +1,7 @@
 package com.example.barcodescanner.util;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -167,5 +169,12 @@ public class CommonUtil {
             }
         }
         return barCodeFields;
+    }
+
+    public static void copyToClipBoard(Context context, CharSequence text) {
+        ClipboardManager clipboard = (ClipboardManager)
+                context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Copy", text);
+        clipboard.setPrimaryClip(clip);
     }
 }

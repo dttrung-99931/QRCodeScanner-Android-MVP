@@ -3,19 +3,13 @@ package com.example.barcodescanner.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.SparseArray;
 
 import androidx.fragment.app.Fragment;
 
 import com.example.barcodescanner.R;
 import com.example.barcodescanner.databinding.ActivityMainBinding;
 import com.example.barcodescanner.ui.base.BaseActivity;
-import com.example.barcodescanner.ui.main.result.ResultFragment;
 import com.example.barcodescanner.ui.main.scan.ScanFragment;
-import com.example.barcodescanner.util.CommonUtil;
-import com.google.android.gms.common.internal.service.Common;
-import com.google.android.gms.vision.barcode.Barcode;
 
 public class MainActivity extends BaseActivity {
     ActivityMainBinding mBinding;
@@ -88,16 +82,5 @@ public class MainActivity extends BaseActivity {
             ((ScanFragment)fragment).resumeScanningWithDelay();
         }
     };
-
-    public void showBarcodeResultWithDelay(SparseArray<Barcode> detectedBarcodes) {
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            ResultFragment.show(
-                    detectedBarcodes,
-                    getSupportFragmentManager(),
-                    mCallBack
-            );
-        }, 300);
-    }
 
 }

@@ -18,4 +18,5 @@
     <string name="value">Value</string>
     <string name="name">Name</string>
     <string name="organization">Organization</string>
+    <string name="copied">Coppied</string>
 </resources>

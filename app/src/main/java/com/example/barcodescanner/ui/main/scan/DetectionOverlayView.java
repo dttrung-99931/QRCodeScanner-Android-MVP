@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -34,7 +35,7 @@ import java.util.List;
  *       coordinate from the preview's coordinate system to the view coordinate system.
  * </ol>
  */
-public class GraphicOverlay extends View {
+public class DetectionOverlayView extends View {
     private final Object lock = new Object();
     private int previewWidth;
     private float widthScaleFactor = 1.0f;
@@ -58,15 +59,37 @@ public class GraphicOverlay extends View {
         postInvalidate();
     }
 
+    public Rect getScanBoundingBox() {
+        return new Rect(
+                getLeft() + mScanFrameSize,
+                getTop() + mScanFrameSize,
+                getRight() - mScanFrameSize,
+                getBottom() - mScanFrameSize*3/2
+                );
+    }
+
+    /*
+    * Convert rect from an camera prevew to rect in the overlay view
+    * by used heightScaleFactor and widthScaleFactor
+    * */
+    public Rect scaleRect(Rect rect) {
+        return new Rect(
+                (int)scaleX(rect.left),
+                (int)scaleY(rect.top),
+                (int)scaleX(rect.right),
+                (int)scaleY(rect.bottom)
+        );
+    }
+
     /**
      * Base class for a custom graphics object to be rendered within the graphic overlay. Subclass
      * this and implement the {@link Graphic#draw(Canvas)} method to define the graphics element. Add
-     * instances to the overlay using {@link GraphicOverlay#add(Graphic)}.
+     * instances to the overlay using {@link DetectionOverlayView#add(Graphic)}.
      */
     public abstract static class Graphic {
-        private GraphicOverlay overlay;
+        private DetectionOverlayView overlay;
 
-        public Graphic(GraphicOverlay overlay) {
+        public Graphic(DetectionOverlayView overlay) {
             this.overlay = overlay;
         }
 
@@ -89,14 +112,14 @@ public class GraphicOverlay extends View {
          * Adjusts a horizontal value of the supplied value from the preview scale to the view scale.
          */
         public float scaleX(float horizontal) {
-            return horizontal * overlay.widthScaleFactor;
+            return overlay.scaleX(horizontal);
         }
 
         /**
          * Adjusts a vertical value of the supplied value from the preview scale to the view scale.
          */
         public float scaleY(float vertical) {
-            return vertical * overlay.heightScaleFactor;
+            return overlay.scaleY(vertical);
         }
 
         /**
@@ -128,12 +151,20 @@ public class GraphicOverlay extends View {
             overlay.postInvalidate();
         }
 
-        public GraphicOverlay getOverlay() {
+        public DetectionOverlayView getOverlay() {
             return overlay;
         }
     }
 
-    public GraphicOverlay(Context context, AttributeSet attrs) {
+    private float scaleY(float vertical) {
+        return vertical * heightScaleFactor;
+    }
+
+    private float scaleX(float horizontal) {
+        return horizontal * widthScaleFactor;
+    }
+
+    public DetectionOverlayView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
