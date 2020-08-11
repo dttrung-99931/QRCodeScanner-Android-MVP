@@ -341,7 +341,10 @@ public class ScanFragment extends BaseFragment implements
     public void showBarcodeDetectionResult(Pair<Bitmap, SparseArray<Barcode>> result) {
 
         Barcode barcodeInScanArea = ViewUtil.getOneDetectedBarCodeInScanArea(
-                result.second, mBinding.barCodeDetectionView.getScanBoundingBox()
+                result.second,
+                mBinding.barCodeDetectionView.getScanAreaInOverlayView(),
+                mBinding.barCodeDetectionView.getWidthScaleFactor(),
+                mBinding.barCodeDetectionView.getHeightScaleFactor()
         );
 
         if (barcodeInScanArea != null) {

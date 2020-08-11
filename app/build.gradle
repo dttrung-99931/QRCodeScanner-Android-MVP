@@ -35,7 +35,6 @@ dependencies {
     // Responsive UI libs
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
-    implementation 'com.google.android.material:material:1.1.0'
 
     def camerax_version = "1.0.0-beta07"
     // CameraX core library using camera2 implementation
@@ -48,10 +47,11 @@ dependencies {
     // Firebase ML: On-Device BarCode Scanning
     implementation 'com.google.mlkit:barcode-scanning:16.0.2'
 
+    // Room Database lib
+    implementation "androidx.room:room-runtime:2.2.5"
+    annotationProcessor "androidx.room:room-compiler:2.2.5"
 
-    // Loading view
-    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
-    
+    implementation 'com.google.android.material:material:1.1.0'
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

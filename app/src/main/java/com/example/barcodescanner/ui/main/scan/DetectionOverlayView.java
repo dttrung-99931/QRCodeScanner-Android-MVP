@@ -11,6 +11,7 @@ import android.view.View;
 import androidx.core.content.ContextCompat;
 
 import com.example.barcodescanner.R;
+import com.example.barcodescanner.util.ViewUtil;
 import com.google.android.gms.vision.CameraSource;
 
 import java.util.ArrayList;
@@ -59,26 +60,44 @@ public class DetectionOverlayView extends View {
         postInvalidate();
     }
 
-    public Rect getScanBoundingBox() {
+    public Rect getScanAreaInOverlayView() {
         return new Rect(
                 getLeft() + mScanFrameSize,
                 getTop() + mScanFrameSize,
                 getRight() - mScanFrameSize,
-                getBottom() - mScanFrameSize*3/2
-                );
+                getBottom() - mScanFrameSize * 3 / 2
+        );
     }
 
     /*
-    * Convert rect from an camera prevew to rect in the overlay view
-    * by used heightScaleFactor and widthScaleFactor
-    * */
-    public Rect scaleRect(Rect rect) {
+     * Convert rect from an camera prevew to rect in the overlay view
+     * by used heightScaleFactor and widthScaleFactor
+     * */
+    public Rect scaleRectToOverlayRatio(Rect rect) {
         return new Rect(
-                (int)scaleX(rect.left),
-                (int)scaleY(rect.top),
-                (int)scaleX(rect.right),
-                (int)scaleY(rect.bottom)
+                (int) scaleX(rect.left),
+                (int) scaleY(rect.top),
+                (int) scaleX(rect.right),
+                (int) scaleY(rect.bottom)
         );
+    }
+
+    /*
+     * Convert rect from an camera prevew to rect in the overlay view
+     * by used heightScaleFactor and widthScaleFactor
+     * */
+    public Rect scaleRectToPreviewRatio(Rect rect) {
+        float widthFactorOverlayToPreview = (float) previewWidth / getWidth();
+        float heightFactorOverlayToPreview = (float) previewHeight / getHeight();
+        return ViewUtil.scaleRect(rect, widthFactorOverlayToPreview, heightFactorOverlayToPreview);
+    }
+
+    public float getWidthScaleFactor(){
+        return widthScaleFactor;
+    }
+
+    public float getHeightScaleFactor(){
+        return heightScaleFactor;
     }
 
     /**
@@ -315,53 +334,53 @@ public class DetectionOverlayView extends View {
         path.reset();
 
 /**
-         * Draw the shape marked by dots
-         * ************
-         * *..******..*
-         * *.        .*
-         * **        **
-         * *.        .*
-         * *..******..*
-         * ************
-         */
+ * Draw the shape marked by dots
+ * ************
+ * *..******..*
+ * *.        .*
+ * **        **
+ * *.        .*
+ * *..******..*
+ * ************
+ */
         // Draw the bottom right
         path.moveTo(
                 getRight() - mScanFrameSize,
-                getBottom() - mScanFrameSize*3/2 - mSquareMarkSize
+                getBottom() - mScanFrameSize * 3 / 2 - mSquareMarkSize
         );
         path.lineTo(
                 getRight() - mScanFrameSize,
-                getBottom() - mScanFrameSize*3/2
+                getBottom() - mScanFrameSize * 3 / 2
         );
         path.lineTo(
                 getRight() - mScanFrameSize - mSquareMarkSize,
-                getBottom() - mScanFrameSize*3/2
+                getBottom() - mScanFrameSize * 3 / 2
         );
         canvas.drawPath(path, mSquareMarkPaint);
         path.reset();
 
 /**
-         * Draw the shape marked by dots
-         * ************
-         * *..******..*
-         * *.        .*
-         * **        **
-         * *.        .*
-         * *..******..*
-         * ************
-         */
+ * Draw the shape marked by dots
+ * ************
+ * *..******..*
+ * *.        .*
+ * **        **
+ * *.        .*
+ * *..******..*
+ * ************
+ */
         // Draw the bottom left
         path.moveTo(
                 getLeft() + mScanFrameSize,
-                getBottom() - mScanFrameSize*3/2 - mSquareMarkSize
+                getBottom() - mScanFrameSize * 3 / 2 - mSquareMarkSize
         );
         path.lineTo(
                 getLeft() + mScanFrameSize,
-                getBottom() - mScanFrameSize*3/2
+                getBottom() - mScanFrameSize * 3 / 2
         );
         path.lineTo(
                 getLeft() + mScanFrameSize + mSquareMarkSize,
-                getBottom() - mScanFrameSize*3/2
+                getBottom() - mScanFrameSize * 3 / 2
         );
         canvas.drawPath(path, mSquareMarkPaint);
         path.reset();
@@ -385,7 +404,7 @@ public class DetectionOverlayView extends View {
         );
         // Draw the bottom rect
         canvas.drawRect(
-                getLeft(), getBottom() - mScanFrameSize*3/2,
+                getLeft(), getBottom() - mScanFrameSize * 3 / 2,
                 getRight(), getBottom(),
                 mScanFramePaint
         );
@@ -400,13 +419,13 @@ public class DetectionOverlayView extends View {
         // Draw the left rect
         canvas.drawRect(
                 getLeft(), getTop() + mScanFrameSize,
-                getLeft() + mScanFrameSize, getBottom() - mScanFrameSize*3/2,
+                getLeft() + mScanFrameSize, getBottom() - mScanFrameSize * 3 / 2,
                 mScanFramePaint
         );
         // Draw the left rect
         canvas.drawRect(
                 getRight() - mScanFrameSize, getTop() + mScanFrameSize,
-                getRight(), getBottom() - mScanFrameSize*3/2,
+                getRight(), getBottom() - mScanFrameSize * 3 / 2,
                 mScanFramePaint
         );
 

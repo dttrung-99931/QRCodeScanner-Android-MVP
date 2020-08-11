@@ -94,15 +94,16 @@
 
                 <ImageButton
                     android:id="@+id/btnRefresh"
-                    android:layout_width="@dimen/_35sdp"
-                    android:layout_height="@dimen/_35sdp"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_60sdp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/_10sdp"
                     android:background="@null"
-                    android:padding="@dimen/_2sdp"
+                    android:padding="@dimen/_13sdp"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_refresh"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    style="@style/ClickAnimStyle"/>
             </FrameLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
