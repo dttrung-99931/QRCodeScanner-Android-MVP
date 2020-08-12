@@ -24,4 +24,8 @@
         <item name="android:focusable">true</item>
     </style>
 
+    <style name="ActiveIcon">
+        <item name="android:colorBackground">#ff0</item>
+    </style>
+
 </resources>

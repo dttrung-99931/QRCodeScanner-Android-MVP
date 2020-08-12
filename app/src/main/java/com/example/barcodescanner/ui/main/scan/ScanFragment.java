@@ -13,6 +13,10 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.TranslateAnimation;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -25,6 +29,7 @@ import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -321,6 +326,9 @@ public class ScanFragment extends BaseFragment implements
         setCollapsingToolbarScrollFlags(
                 AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
         );
+        translateAppBarLayoutVertically(
+                ViewUtil.sdpToPx(getResources(), R.dimen._40sdp)
+        );
 
         mBinding.imvDetectedBarCode.setVisibility(View.GONE);
         mBinding.barCodeDetectionView.clear();
@@ -351,11 +359,48 @@ public class ScanFragment extends BaseFragment implements
             setDetectionViewProperties(result.first);
             showBarCodeDetection(barcodeInScanArea);
             showDetectedBarcodeResult(barcodeInScanArea);
+            scrollResultUp();
         } else {  // If there is no detected barcode images
             // Close to detect another frame
             mCurDetectedImageProxy.close();
             mBinding.barCodeDetectionView.removeAllAndInvalidate();
         }
 
+    }
+
+    private void scrollResultUp() {
+        translateAppBarLayoutVertically(
+                -ViewUtil.sdpToPx(getResources(), R.dimen._40sdp)
+        );
+    }
+
+    private void translateAppBarLayoutVertically(int additionalPx) {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
+                mBinding.appBarLayout.getLayoutParams();
+
+        TranslateAnimation translateAnimation = new TranslateAnimation(
+                mBinding.appBarLayout.getX(),
+                mBinding.appBarLayout.getX(),
+                mBinding.appBarLayout.getY(),
+                mBinding.appBarLayout.getY() + additionalPx
+        );
+        translateAnimation.setDuration(500);
+        translateAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                params.topMargin = params.topMargin + additionalPx;
+                mBinding.appBarLayout.setLayoutParams(params);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mBinding.appBarLayout.startAnimation(translateAnimation);
     }
 }
