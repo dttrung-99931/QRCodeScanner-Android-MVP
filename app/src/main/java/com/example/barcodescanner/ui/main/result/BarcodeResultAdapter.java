@@ -10,26 +10,30 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.barcodescanner.R;
-import com.example.barcodescanner.data.model.BarCodeData;
+import com.example.barcodescanner.data.local.model.BarcodeField;
+import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.databinding.ItemBarcodeFieldBinding;
 import com.example.barcodescanner.ui.base.BaseViewHolder;
 import com.example.barcodescanner.util.CommonUtil;
 import com.example.barcodescanner.util.ViewUtil;
 
-import java.util.List;
+import static java.lang.Math.max;
 
 /**
  * Created by Trung on 8/9/2020
  */
-public class BarCodeFieldAdapter extends RecyclerView.Adapter<BarCodeFieldAdapter.BarCodeFieldViewHolder> {
-    private List<BarCodeData.BarCodeField> mBarCodeFields;
+public class BarcodeResultAdapter extends RecyclerView.Adapter<BarcodeResultAdapter.BarCodeFieldViewHolder> {
+    private RelationBarcodeData relationBarcodeData;
 
-    public BarCodeFieldAdapter(List<BarCodeData.BarCodeField> barCodeFields) {
-        mBarCodeFields = barCodeFields;
+    public BarcodeResultAdapter() {
     }
 
-    public void setBarCodeFields(List<BarCodeData.BarCodeField> mBarCodeFields) {
-        this.mBarCodeFields = mBarCodeFields;
+    public RelationBarcodeData getRelationBarcodeData() {
+        return relationBarcodeData;
+    }
+
+    public void setRelationBarcodeData(RelationBarcodeData relationBarcodeData) {
+        this.relationBarcodeData = relationBarcodeData;
     }
 
     @NonNull
@@ -48,7 +52,7 @@ public class BarCodeFieldAdapter extends RecyclerView.Adapter<BarCodeFieldAdapte
 
     @Override
     public int getItemCount() {
-        return mBarCodeFields.size();
+        return relationBarcodeData.barcodeFields.size();
     }
 
     class BarCodeFieldViewHolder extends BaseViewHolder {
@@ -61,11 +65,11 @@ public class BarCodeFieldAdapter extends RecyclerView.Adapter<BarCodeFieldAdapte
 
         @Override
         public void bindView(int position) {
-            BarCodeData.BarCodeField field = mBarCodeFields.get(position);
-            if (mBarCodeFields.size() == 1) {
+            BarcodeField field = relationBarcodeData.barcodeFields.get(position);
+            if (relationBarcodeData.barcodeFields.size() == 1) {
                 changeItemUI();
             } else {
-                mBinding.tvFieldName.setText(field.getFieldName());
+                mBinding.tvFieldName.setText(field.getFieldNameStrResId());
             }
             mBinding.tvFieldValue.setText(field.getFieldValue());
             mBinding.btnCopy.setOnClickListener(v -> {

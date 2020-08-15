@@ -8,7 +8,7 @@
     <string name="example_result">Doanthanhtrung4321@gmail.com</string>
     <string name="text">Text</string>
     <string name="email">Email</string>
-    <string name="url">Url</string>
+    <string name="urls">Url</string>
     <string name="sms">Sms</string>
     <string name="wifi">Wifi</string>
     <string name="calendarEvent">Calendar Event</string>
@@ -19,4 +19,11 @@
     <string name="name">Name</string>
     <string name="organization">Organization</string>
     <string name="copied">Coppied</string>
+    <string name="addresses">Addresses</string>
+    <string name="phones">Phones</string>
+    <string name="url">Url</string>
+    <string name="email_address">Address</string>
+    <string name="email_subject">Subject</string>
+    <string name="email_body">Body</string>
+    <string name="url_title">Title</string>
 </resources>

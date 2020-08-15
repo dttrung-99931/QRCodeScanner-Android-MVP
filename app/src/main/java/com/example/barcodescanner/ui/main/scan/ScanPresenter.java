@@ -5,10 +5,14 @@ import android.graphics.Bitmap;
 import android.util.Pair;
 import android.util.SparseArray;
 
+import com.example.barcodescanner.data.local.AppDB;
+import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.ui.base.BasePresenter;
 import com.example.barcodescanner.ui.base.BaseView;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+
+import io.reactivex.Completable;
 
 /**
  * Created by Trung on 8/7/2020
@@ -20,12 +24,12 @@ class ScanPresenter extends BasePresenter<ScanPresenter.View> {
     }
 
     /*
-    * Call this function after this.onAttached on view
-    * to init mBarCodeDetector
-    * */
-    public void initBarcodeDetector(Context apllicationContext){
+     * Call this function after this.onAttached on view
+     * to init mBarCodeDetector
+     * */
+    public void initBarcodeDetector(Context appContext) {
         mBarCodeDetector = new BarcodeDetector
-                .Builder(apllicationContext)
+                .Builder(appContext)
                 .setBarcodeFormats(
                         com.google.android.gms.vision.barcode.Barcode.DATA_MATRIX
                                 | Barcode.QR_CODE
@@ -42,8 +46,20 @@ class ScanPresenter extends BasePresenter<ScanPresenter.View> {
                 .execute(bitmap);
     }
 
+    public void onShowBarcodeResultComplete(RelationBarcodeData relBarcodeData) {
+        Completable result = AppDB.barcodeDAO().insertBarcodeDataWithFields(relBarcodeData);
+        addDisposable(
+                setupRX(result)
+                        .subscribe(() -> {
+                            getView().notifyRefreshHistoryFragment();
+                        })
+        );
+    }
+
     public interface View extends BaseView {
 
         void showBarcodeDetectionResult(Pair<Bitmap, SparseArray<Barcode>> barcodes);
+
+        void notifyRefreshHistoryFragment();
     }
 }

@@ -118,27 +118,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/tvBarCodeType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:padding="@dimen/_2sdp"
-            android:text="AAA"
-            android:textColor="#886BCD"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewBarCodeFields"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:layout_below="@id/tvBarCodeType"/>
-
-    </RelativeLayout>
+        android:layout_marginTop="@dimen/_5sdp"/>
  </androidx.coordinatorlayout.widget.CoordinatorLayout>

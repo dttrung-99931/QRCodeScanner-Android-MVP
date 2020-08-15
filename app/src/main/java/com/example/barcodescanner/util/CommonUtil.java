@@ -12,16 +12,11 @@ import android.graphics.YuvImage;
 import android.media.Image;
 import android.util.Log;
 
-import androidx.camera.core.ImageProxy;
-
-import com.example.barcodescanner.data.model.BarCodeData;
-import com.google.android.gms.vision.barcode.Barcode;
+import com.example.barcodescanner.R;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Trung on 8/6/2020
@@ -86,6 +81,13 @@ public class CommonUtil {
         return fieldName;
     }
 
+    /*
+    * Map the @param fileName of a class to corresponding R.string.fieldName
+    * */
+    public static int mapFieldNameToStrResId(String fieldName, Context context) {
+        return R.string.urls;
+    }
+
     public static String compressObjToString(
             Object data, Context context,
             boolean ignoreEmptyOrNullField) throws IllegalAccessException {
@@ -124,52 +126,52 @@ public class CommonUtil {
         return !fieldName.isEmpty() && Character.isLowerCase(fieldName.charAt(0));
     }
 
-    public static String compressObjArrToString(
-            Object []objs,
-            Context context,
-            boolean ignoreEmptyOrNullField) throws IllegalAccessException {
-        StringBuilder compressedDataStr = new StringBuilder();
-        for (Object dataObj : objs) {
-            compressedDataStr.append(
-                    compressObjToString(dataObj, context, ignoreEmptyOrNullField) + "\n\n"
-            );
-        }
-        return compressedDataStr.toString();
-    }
-
-    public static String joinStrs(String delimiter, String end, String[] strs) {
-        StringBuilder builder = new StringBuilder();
-        for (int i=0; i<strs.length; i++) {
-            if (i != strs.length -1)
-                builder.append(strs[i] + delimiter);
-            else builder.append(strs[i] + end);
-        }
-        return builder.toString();
-    }
-
-    public static List<BarCodeData.BarCodeField> parseToBarCodeDataFields(
-            Object data, Context context, boolean ignoreEmptyField)
-            throws IllegalAccessException {
-
-        List<BarCodeData.BarCodeField> barCodeFields = new ArrayList<>();
-
-        for (Field field : data.getClass().getFields()) {
-
-            String fieldName = field.getName();
-
-            if (CommonUtil.isNormalField(fieldName)) {
-                String mappedFieldName = CommonUtil.mapField(fieldName, context);
-                String value = field.get(data).toString();
-
-                if (value.isEmpty() && ignoreEmptyField) continue;
-
-                barCodeFields.add(new BarCodeData.BarCodeField(
-                        mappedFieldName, value
-                ));
-            }
-        }
-        return barCodeFields;
-    }
+//    public static String compressObjArrToString(
+//            Object []objs,
+//            Context context,
+//            boolean ignoreEmptyOrNullField) throws IllegalAccessException {
+//        StringBuilder compressedDataStr = new StringBuilder();
+//        for (Object dataObj : objs) {
+//            compressedDataStr.append(
+//                    compressObjToString(dataObj, context, ignoreEmptyOrNullField) + "\n\n"
+//            );
+//        }
+//        return compressedDataStr.toString();
+//    }
+//
+//    public static String joinStrs(String delimiter, String end, String[] strs) {
+//        StringBuilder builder = new StringBuilder();
+//        for (int i=0; i<strs.length; i++) {
+//            if (i != strs.length -1)
+//                builder.append(strs[i] + delimiter);
+//            else builder.append(strs[i] + end);
+//        }
+//        return builder.toString();
+//    }
+//
+//    public static List<BarcodeField> parseToBarcodeFields(
+//            Object data, Context context, boolean ignoreEmptyField)
+//            throws IllegalAccessException {
+//
+//        List<BarcodeField> barcodeFields = new ArrayList<>();
+//
+//        for (Field field : data.getClass().getFields()) {
+//
+//            String fieldName = field.getName();
+//
+//            if (CommonUtil.isNormalField(fieldName)) {
+//                int fieldNameResId = CommonUtil.mapFieldNameToStrResId(fieldName, context);
+//                String value = field.get(data).toString();
+//
+//                if (value.isEmpty() && ignoreEmptyField) continue;
+//
+//                barcodeFields.add(new BarcodeField(
+//                        fieldNameResId, value
+//                ));
+//            }
+//        }
+//        return barcodeFields;
+//    }
 
     public static void copyToClipBoard(Context context, CharSequence text) {
         ClipboardManager clipboard = (ClipboardManager)

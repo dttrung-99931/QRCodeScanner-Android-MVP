@@ -14,8 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -31,13 +29,13 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.barcodescanner.R;
-import com.example.barcodescanner.data.model.BarCodeData;
+import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.databinding.FragmentScanBinding;
 import com.example.barcodescanner.ui.base.BaseFragment;
-import com.example.barcodescanner.ui.main.result.BarCodeFieldAdapter;
+import com.example.barcodescanner.ui.main.MainActivity;
+import com.example.barcodescanner.ui.main.result.ResultFragment;
 import com.example.barcodescanner.util.CommonUtil;
 import com.example.barcodescanner.util.ViewUtil;
 import com.google.android.gms.vision.CameraSource;
@@ -45,8 +43,6 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -89,7 +85,6 @@ public class ScanFragment extends BaseFragment implements
         setupZoomSeekBar();
         setupBtnFlash();
         setupBtnTurnCamera();
-        setupRecyclerViewBarcodeFields();
         setupBtnRefresh();
     }
 
@@ -106,17 +101,6 @@ public class ScanFragment extends BaseFragment implements
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams)
                 mBinding.collapsingToolbar.getLayoutParams();
         params.setScrollFlags(scrollFlagNoScroll);
-    }
-
-    private BarCodeFieldAdapter mBarCodeFieldAdapter;
-
-    private void setupRecyclerViewBarcodeFields() {
-        mBarCodeFieldAdapter = new BarCodeFieldAdapter(
-                new ArrayList<>());
-        mBinding.recyclerViewBarCodeFields.setAdapter(mBarCodeFieldAdapter);
-        mBinding.recyclerViewBarCodeFields.setLayoutManager(
-                new LinearLayoutManager(requireContext())
-        );
     }
 
     private void setupZoomSeekBar() {
@@ -262,7 +246,7 @@ public class ScanFragment extends BaseFragment implements
         }
     }
 
-    private void showDetectedBarcodeResult(Barcode barcode) {
+    private void showDetectedBarcodeResult(RelationBarcodeData relBarcodeData) {
         mIsShowingResult = true;
         mBinding.btnRefresh.setVisibility(View.VISIBLE);
         mBinding.layoutResult.setVisibility(View.VISIBLE);
@@ -272,24 +256,10 @@ public class ScanFragment extends BaseFragment implements
                 AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
         );
 
-        try {
-            /*Normally barcode has only one type, like: PHONE, EMAIL ...,
-             * if a barcode has many types then there will be many BarCodeData from the barcode */
-            List<BarCodeData> barCodeDataList = BarCodeData.listFromBarcode(
-                    barcode, requireContext()
-            );
-
-            /*Assume that barcode has only one type*/
-            BarCodeData firstBarCodeData = barCodeDataList.get(0);
-
-            mBinding.tvBarCodeType.setText(firstBarCodeData.getTypeName());
-            mBarCodeFieldAdapter.setBarCodeFields(
-                    firstBarCodeData.getBarCodeFields()
-            );
-            mBarCodeFieldAdapter.notifyDataSetChanged();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        getBaseActivity().replaceFragment(
+                R.id.layout_result,
+                new ResultFragment(relBarcodeData)
+        );
     }
 
     /*
@@ -356,16 +326,26 @@ public class ScanFragment extends BaseFragment implements
         );
 
         if (barcodeInScanArea != null) {
+            RelationBarcodeData relBarcodeData =
+                    RelationBarcodeData.fromBarcode(barcodeInScanArea);
+
             setDetectionViewProperties(result.first);
             showBarCodeDetection(barcodeInScanArea);
-            showDetectedBarcodeResult(barcodeInScanArea);
+            showDetectedBarcodeResult(relBarcodeData);
             scrollResultUp();
+
+            mPresenter.onShowBarcodeResultComplete(relBarcodeData);
         } else {  // If there is no detected barcode images
             // Close to detect another frame
             mCurDetectedImageProxy.close();
             mBinding.barCodeDetectionView.removeAllAndInvalidate();
         }
 
+    }
+
+    @Override
+    public void notifyRefreshHistoryFragment() {
+        ((MainActivity)getBaseActivity()).notifyRefreshHistoryFragment();
     }
 
     private void scrollResultUp() {

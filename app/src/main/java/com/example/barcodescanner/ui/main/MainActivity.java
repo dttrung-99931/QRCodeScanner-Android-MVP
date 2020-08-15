@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import com.example.barcodescanner.R;
 import com.example.barcodescanner.databinding.ActivityMainBinding;
 import com.example.barcodescanner.ui.base.BaseActivity;
+import com.example.barcodescanner.ui.main.history.HistoryFragment;
 import com.example.barcodescanner.ui.main.scan.ScanFragment;
 
 public class MainActivity extends BaseActivity {
@@ -67,6 +68,18 @@ public class MainActivity extends BaseActivity {
     private void bindView() {
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+    }
+
+    public void notifyRefreshHistoryFragment() {
+        HistoryFragment historyFragment = (HistoryFragment)
+                getFragmentInViewPager(0);
+        historyFragment.refresh();
+    }
+
+    private Fragment getFragmentInViewPager(int i) {
+        String fragmentTagInViewPager = "f" + i;
+        return getSupportFragmentManager()
+                .findFragmentByTag(fragmentTagInViewPager);
     }
 
     public interface FragmentDismissCallBack {

@@ -1,0 +1,30 @@
+<RelativeLayout android:id="@+id/layout_result"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/shape_item_barcode_data"
+    android:paddingHorizontal="@dimen/_5sdp"
+    android:paddingBottom="@dimen/_8sdp">
+
+    <TextView
+        android:id="@+id/tvBarCodeType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:text="AAA"
+        android:textColor="#886BCD"
+        android:textSize="@dimen/_18ssp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:layout_below="@id/tvBarCodeType"/>
+
+</RelativeLayout>
