@@ -57,6 +57,11 @@ public class BasePresenter<T extends BaseView>{
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    protected <TData> Single<TData> setupComputationRX(Single<TData> single) {
+        return single.subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     protected Completable setupRX(Completable completable) {
         return completable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

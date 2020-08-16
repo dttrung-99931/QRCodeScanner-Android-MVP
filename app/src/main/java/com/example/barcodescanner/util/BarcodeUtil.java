@@ -1,6 +1,16 @@
 package com.example.barcodescanner.util;
 
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.util.Pair;
+import android.util.SparseArray;
+
+import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
+
+import io.reactivex.Single;
 
 /**
  * Created by Trung on 8/15/2020
@@ -31,6 +41,20 @@ public abstract class BarcodeUtil {
             public String fromString(String str) {
                 return null;
             }
+        });
+    }
+
+    public static Single<Pair<Bitmap, SparseArray<Barcode>>>
+        detect(Image image, BarcodeDetector mBarCodeDetector) {
+        return Single.create(emitter -> {
+            @SuppressLint("UnsafeExperimentalUsageError")
+            Bitmap bitmap = CommonUtil.toBitmap(image);
+            Frame frame = new Frame.Builder()
+                    .setBitmap(bitmap)
+                    .build();
+            SparseArray<Barcode> detectedBarcodes =
+                    mBarCodeDetector.detect(frame);
+            emitter.onSuccess(new Pair<>(bitmap, detectedBarcodes));
         });
     }
 

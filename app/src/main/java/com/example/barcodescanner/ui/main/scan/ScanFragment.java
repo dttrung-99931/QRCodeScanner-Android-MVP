@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Layout;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -37,7 +36,6 @@ import com.example.barcodescanner.databinding.FragmentScanBinding;
 import com.example.barcodescanner.ui.base.BaseFragment;
 import com.example.barcodescanner.ui.main.MainActivity;
 import com.example.barcodescanner.ui.main.result.ResultFragment;
-import com.example.barcodescanner.util.CommonUtil;
 import com.example.barcodescanner.util.ViewUtil;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -234,16 +232,15 @@ public class ScanFragment extends BaseFragment implements
                 cameraSelector, mCameraPreview, mCameraAnalyzer);
     }
 
-    private boolean mIsShowingResult = false;
-    private ImageProxy mCurDetectedImageProxy;
+    private boolean mIsShowingResult = false, mIsStopScanning = false;
+    private ImageProxy mCurAnalyzedImageProxy;
 
+    @SuppressLint("UnsafeExperimentalUsageError")
     @Override
     public void analyze(@NonNull ImageProxy image) {
-        if (!mIsShowingResult) {
-            @SuppressLint("UnsafeExperimentalUsageError")
-            Bitmap bitmap = CommonUtil.toBitmap(image.getImage());
-            mCurDetectedImageProxy = image;
-            mPresenter.detectBarcode(bitmap);
+        mCurAnalyzedImageProxy = image;
+        if (!mIsShowingResult && !mIsStopScanning) {
+            mPresenter.detectBarcode(image.getImage());
         }
     }
 
@@ -309,15 +306,16 @@ public class ScanFragment extends BaseFragment implements
     private void closeDetectedImgProxyWithDelay() {
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            if (mCurDetectedImageProxy != null) {
-                mCurDetectedImageProxy.close();
-                mCurDetectedImageProxy = null;
+            if (mCurAnalyzedImageProxy != null) {
+                mCurAnalyzedImageProxy.close();
+                mCurAnalyzedImageProxy = null;
             }
         }, 300);
     }
 
     @Override
     public void showBarcodeDetectionResult(Pair<Bitmap, SparseArray<Barcode>> result) {
+        if (result.second == null) return;
 
         Barcode barcodeInScanArea = ViewUtil.getOneDetectedBarCodeInScanArea(
                 result.second,
@@ -333,7 +331,7 @@ public class ScanFragment extends BaseFragment implements
             setDetectionViewProperties(result.first);
             showBarCodeDetection(barcodeInScanArea);
 
-            if (relBarcodeData == null){
+            if (relBarcodeData == null) {
                 showToastMsg(R.string.format_not_support);
                 mIsShowingResult = true;
                 mBinding.btnRefresh.setVisibility(View.VISIBLE);
@@ -346,7 +344,7 @@ public class ScanFragment extends BaseFragment implements
             mPresenter.onShowBarcodeResultComplete(relBarcodeData);
         } else {  // If there is no detected barcode images
             // Close to detect another frame
-            mCurDetectedImageProxy.close();
+            mCurAnalyzedImageProxy.close();
             mBinding.barCodeDetectionView.removeAllAndInvalidate();
         }
 
@@ -354,7 +352,7 @@ public class ScanFragment extends BaseFragment implements
 
     @Override
     public void notifyRefreshHistoryFragment() {
-        ((MainActivity)getBaseActivity()).notifyRefreshHistoryFragment();
+        ((MainActivity) getBaseActivity()).notifyRefreshHistoryFragment();
     }
 
     private void scrollResultUp() {
@@ -391,5 +389,18 @@ public class ScanFragment extends BaseFragment implements
             }
         });
         mBinding.appBarLayout.startAnimation(translateAnimation);
+    }
+
+    public void stopDetecting() {
+        if (!mIsShowingResult) {
+            mIsStopScanning = true;
+        }
+    }
+
+    public void resumeDetecting() {
+        if (!mIsShowingResult) {
+            mIsStopScanning = false;
+            mCurAnalyzedImageProxy.close();
+        }
     }
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.barcodescanner.R;
 import com.example.barcodescanner.databinding.ActivityMainBinding;
@@ -35,10 +36,13 @@ public class MainActivity extends BaseActivity {
             getSupportFragmentManager(), getLifecycle());
 
     private void setupViewPagerAndBottomNav() {
+        mBinding.viewPager.setAdapter(mMainFragmentAdapter);
+
         // Init selected scan fragment page
         mBinding.navBottom.setSelectedItemId(R.id.menu_item_scan);
+        mBinding.viewPager.setCurrentItem(1);
 
-        mBinding.viewPager.setAdapter(mMainFragmentAdapter);
+        // Set switch fragment on viewpager when active navBottom item changed
         mBinding.navBottom.setOnNavigationItemSelectedListener(
                 item -> {
                     mBinding.viewPager.setCurrentItem(
@@ -48,10 +52,27 @@ public class MainActivity extends BaseActivity {
                 }
         );
 
-        mBinding.viewPager.setCurrentItem(1);
+        // Stop/pause scanning when switching through/back ScanFragment
+        mBinding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                ScanFragment scanFragment = getScanFragment();
+                if (scanFragment == null) return;
+                if (position != 1){
+                    scanFragment.stopDetecting();
+                } else {
+                    scanFragment.resumeDetecting();
+                }
+                super.onPageSelected(position);
+            }
+        });
 
-        // Disable view pager switch
+        // Disable view pager switching
         mBinding.viewPager.setUserInputEnabled(false);
+    }
+
+    private ScanFragment getScanFragment() {
+        return (ScanFragment) getFragmentInViewPager(1);
     }
 
     private int mapToViewPagerPos(int itemId) {
