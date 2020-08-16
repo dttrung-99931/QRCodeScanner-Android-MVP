@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Layout;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -258,12 +259,12 @@ public class ScanFragment extends BaseFragment implements
 
         getBaseActivity().replaceFragment(
                 R.id.layout_result,
-                new ResultFragment(relBarcodeData)
+                new ResultFragment(relBarcodeData, ViewGroup.LayoutParams.MATCH_PARENT)
         );
     }
 
     /*
-     * Show only one detected barcode that is in the scan area
+     * Show only one detection barcode that is in the scan area
      * */
     private void showBarCodeDetection(Barcode barcode) {
         // Draw barcode detection on barCodeDetectionView
@@ -331,6 +332,14 @@ public class ScanFragment extends BaseFragment implements
 
             setDetectionViewProperties(result.first);
             showBarCodeDetection(barcodeInScanArea);
+
+            if (relBarcodeData == null){
+                showToastMsg(R.string.format_not_support);
+                mIsShowingResult = true;
+                mBinding.btnRefresh.setVisibility(View.VISIBLE);
+                return;
+            }
+
             showDetectedBarcodeResult(relBarcodeData);
             scrollResultUp();
 

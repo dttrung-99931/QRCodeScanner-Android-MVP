@@ -19,12 +19,13 @@ import com.example.barcodescanner.ui.main.MainActivity;
 /**
  * Created by Trung on 8/7/2020
  */
-public class ResultFragment extends BaseDialogFragment implements ResultPresenter.View{
+public class ResultFragment extends BaseDialogFragment implements ResultPresenter.View {
 
     private FragmentResultBinding mBinding;
     private RelationBarcodeData mRelBarcodeData;
     private MainActivity.FragmentDismissCallBack mCallBack;
     public static String TAG = "ResultFragment";
+    private int mHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
 
     public ResultFragment(
             RelationBarcodeData relationBarcodeData,
@@ -37,17 +38,31 @@ public class ResultFragment extends BaseDialogFragment implements ResultPresente
         mRelBarcodeData = relationBarcodeData;
     }
 
+    public ResultFragment(RelationBarcodeData relationBarcodeData, int height) {
+        this(relationBarcodeData);
+        mHeight = height;
+    }
+
     public static void show(
             RelationBarcodeData relationBarcodeData,
             FragmentManager fragmentManager,
-            MainActivity.FragmentDismissCallBack callBack){
+            MainActivity.FragmentDismissCallBack callBack) {
         ResultFragment fragment = new ResultFragment(relationBarcodeData, callBack);
         fragment.show(fragmentManager, TAG);
     }
 
     public static void show(
             RelationBarcodeData relationBarcodeData,
-            FragmentManager fragmentManager){
+            FragmentManager fragmentManager,
+            int width) {
+        ResultFragment fragment = new ResultFragment(relationBarcodeData, width);
+        fragment.show(fragmentManager, TAG);
+    }
+
+    public static void show(
+            RelationBarcodeData relationBarcodeData,
+            FragmentManager fragmentManager
+    ) {
         ResultFragment fragment = new ResultFragment(relationBarcodeData);
         fragment.show(fragmentManager, TAG);
     }
@@ -77,16 +92,23 @@ public class ResultFragment extends BaseDialogFragment implements ResultPresente
         setupView();
     }
 
-    private BarcodeResultAdapter mBarCodeResultAdapter;
-
     private void setupView() {
+        changeHeight();
         setupRecyclerViewBarcodeResult();
         mBinding.tvBarCodeType.setText(
                 mRelBarcodeData.barcodeData.getTypeStrResId());
     }
 
+    private void changeHeight() {
+        ViewGroup.LayoutParams params = mBinding.layoutResult.getLayoutParams();
+        if (params.height != mHeight) {
+            params.height = mHeight;
+            mBinding.layoutResult.setLayoutParams(params);
+        }
+    }
+
     private void setupRecyclerViewBarcodeResult() {
-        mBarCodeResultAdapter = new BarcodeResultAdapter();
+        BarcodeResultAdapter mBarCodeResultAdapter = new BarcodeResultAdapter();
         mBarCodeResultAdapter.setRelationBarcodeData(mRelBarcodeData);
         mBinding.recyclerView.setLayoutManager(
                 new LinearLayoutManager(requireContext())

@@ -17,6 +17,8 @@ import com.example.barcodescanner.R;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Trung on 8/6/2020
@@ -41,7 +43,7 @@ public class CommonUtil {
     }
 
     public static Bitmap toBitmap(Image image) {
-        Image.Plane []planes = image.getPlanes();
+        Image.Plane[] planes = image.getPlanes();
         ByteBuffer yBuffer = planes[0].getBuffer();
         ByteBuffer uBuffer = planes[1].getBuffer();
         ByteBuffer vBuffer = planes[2].getBuffer();
@@ -75,15 +77,15 @@ public class CommonUtil {
     }
 
     /*
-    * Map the @param fileName of a class to corresponding R.string.fieldName
-    * */
+     * Map the @param fileName of a class to corresponding R.string.fieldName
+     * */
     public static String mapField(String fieldName, Context context) {
         return fieldName;
     }
 
     /*
-    * Map the @param fileName of a class to corresponding R.string.fieldName
-    * */
+     * Map the @param fileName of a class to corresponding R.string.fieldName
+     * */
     public static int mapFieldNameToStrResId(String fieldName, Context context) {
         return R.string.urls;
     }
@@ -96,13 +98,13 @@ public class CommonUtil {
 
         Field[] fields = data.getClass().getFields();
 
-        for (int i = 0; i< fields.length; i++) {
+        for (int i = 0; i < fields.length; i++) {
 
             Field field = fields[i];
             String fieldName = field.getName();
 
             if (CommonUtil.isNormalField(fieldName)) {
-                    String mappedFieldName = CommonUtil.mapField(fieldName, context);
+                String mappedFieldName = CommonUtil.mapField(fieldName, context);
                 String value = field.get(data).toString();
 
                 if (ignoreEmptyOrNullField && value.isEmpty()) continue;
@@ -126,7 +128,7 @@ public class CommonUtil {
         return !fieldName.isEmpty() && Character.isLowerCase(fieldName.charAt(0));
     }
 
-//    public static String compressObjArrToString(
+    //    public static String compressObjArrToString(
 //            Object []objs,
 //            Context context,
 //            boolean ignoreEmptyOrNullField) throws IllegalAccessException {
@@ -139,15 +141,15 @@ public class CommonUtil {
 //        return compressedDataStr.toString();
 //    }
 //
-//    public static String joinStrs(String delimiter, String end, String[] strs) {
-//        StringBuilder builder = new StringBuilder();
-//        for (int i=0; i<strs.length; i++) {
-//            if (i != strs.length -1)
-//                builder.append(strs[i] + delimiter);
-//            else builder.append(strs[i] + end);
-//        }
-//        return builder.toString();
-//    }
+    public static String joinStrs(String delimiter, String end, String[] strs) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < strs.length; i++) {
+            if (i != strs.length - 1)
+                builder.append(strs[i] + delimiter);
+            else builder.append(strs[i] + end);
+        }
+        return builder.toString();
+    }
 //
 //    public static List<BarcodeField> parseToBarcodeFields(
 //            Object data, Context context, boolean ignoreEmptyField)
@@ -178,5 +180,16 @@ public class CommonUtil {
                 context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Copy", text);
         clipboard.setPrimaryClip(clip);
+    }
+
+    public static boolean isCurrentDate(Date date) {
+        Date curDate = Calendar.getInstance().getTime();
+        return equalsDate(date, curDate);
+    }
+
+    public static boolean equalsDate(Date date1, Date date2) {
+        return date2.getYear() == date1.getYear() &&
+                date2.getMonth() == date1.getMonth() &&
+                date2.getDay() == date1.getDay();
     }
 }

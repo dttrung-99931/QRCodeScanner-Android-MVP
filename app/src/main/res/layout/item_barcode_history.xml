@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:id="@+id/layoutResult">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardviewResult"
@@ -12,11 +12,12 @@
         android:layout_marginTop="@dimen/_3sdp">
 
         <RelativeLayout
+            android:id="@+id/layoutCardViewResult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FAF2FF"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/_6sdp">
+            android:paddingBottom="@dimen/_6sdp"
+            style="@style/ClickAnimStyle">
 
             <ImageButton
                 android:id="@+id/btnCopy"
@@ -41,19 +42,18 @@
                 android:text="Email"
                 android:textColor="#886BCD"
                 android:textSize="@dimen/_17ssp"
-                android:textStyle="bold"
-                android:visibility="visible" />
+                android:textStyle="bold" />
 
-            <androidx.core.widget.NestedScrollView
+            <ScrollView
                 android:id="@+id/scrollViewResult"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvFieldName">
 
                 <TextView
                     android:id="@+id/tvFieldValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/_30sdp"
                     android:maxHeight="@dimen/_490sdp"
                     android:paddingStart="@dimen/_25sdp"
@@ -62,7 +62,7 @@
                     android:textColor="#886BCD"
                     android:textSize="@dimen/_16ssp" />
 
-            </androidx.core.widget.NestedScrollView>
+            </ScrollView>
 
             <TextView
                 android:id="@+id/tvTime"

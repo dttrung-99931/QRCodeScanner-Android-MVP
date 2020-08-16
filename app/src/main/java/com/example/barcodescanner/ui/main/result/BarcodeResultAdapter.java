@@ -28,10 +28,6 @@ public class BarcodeResultAdapter extends RecyclerView.Adapter<BarcodeResultAdap
     public BarcodeResultAdapter() {
     }
 
-    public RelationBarcodeData getRelationBarcodeData() {
-        return relationBarcodeData;
-    }
-
     public void setRelationBarcodeData(RelationBarcodeData relationBarcodeData) {
         this.relationBarcodeData = relationBarcodeData;
     }

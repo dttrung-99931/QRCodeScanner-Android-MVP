@@ -57,19 +57,21 @@ public class HistoryFragment extends BaseFragment implements HistoryPresenter.Vi
 
     private void setupRecyclerViewBarcodeFields() {
         mBarcodeHistoryAdapter = new BarcodeHistoryAdapter();
-        mBinding.recyclerViewBarCodeDataList.addItemDecoration(
+        mBinding.recyclerView.addItemDecoration(
                 new SpacingDecorator(ViewUtil.sdpToPx(getResources(), R.dimen._3sdp))
         );
-        mBinding.recyclerViewBarCodeDataList.setAdapter(mBarcodeHistoryAdapter);
-        mBinding.recyclerViewBarCodeDataList.setLayoutManager(
-                new LinearLayoutManager(requireContext())
-        );
+        mBarcodeHistoryAdapter.setChildFragmentManager(getChildFragmentManager());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
+        layoutManager.setReverseLayout(true);
+        mBinding.recyclerView.setLayoutManager(layoutManager);
+        mBinding.recyclerView.setAdapter(mBarcodeHistoryAdapter);
     }
 
     @Override
     public void showBarcodeHistories(List<RelationBarcodeData> relBarcodeDataList) {
         mBarcodeHistoryAdapter.setRelBarcodeDataList(relBarcodeDataList);
         mBarcodeHistoryAdapter.notifyDataSetChanged();
+        mBinding.recyclerView.scrollToPosition(mBarcodeHistoryAdapter.getItemCount()-1);
     }
 
     public void refresh() {
