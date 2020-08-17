@@ -2,10 +2,11 @@ package com.example.barcodescanner.data.local.model;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
+import com.example.barcodescanner.R;
 import com.example.barcodescanner.data.local.DateConverter;
+import com.google.android.gms.vision.barcode.Barcode;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -20,19 +21,19 @@ public class BarcodeData {
     @PrimaryKey(autoGenerate = true)
     private Long id;
 
-    private int typeStrResId;
+    private int type;
 
     private int barcodeDataParentId;
 
     @TypeConverters({DateConverter.class})
     private Date createdAt;
 
-    public static BarcodeData createWithNoParent(int typeStrResId) {
-        return new BarcodeData(typeStrResId, ID_NO_PARENT);
+    public static BarcodeData createWithNoParent(int type) {
+        return new BarcodeData(type, ID_NO_PARENT);
     }
 
-    private BarcodeData(int typeStrResId, int barcodeDataParentId) {
-        this.typeStrResId = typeStrResId;
+    private BarcodeData(int type, int barcodeDataParentId) {
+        this.type = type;
         this.barcodeDataParentId = barcodeDataParentId;
         this.createdAt = Calendar.getInstance().getTime();
     }
@@ -57,11 +58,24 @@ public class BarcodeData {
     }
 
     public int getTypeStrResId() {
-        return typeStrResId;
+        switch (type) {
+            case Barcode.TEXT: return R.string.text;
+            case Barcode.URL: return R.string.url;
+            case Barcode.PHONE: return R.string.phone;
+            case Barcode.PRODUCT: return R.string.product;
+            case Barcode.CONTACT_INFO: return R.string.contact;
+            case Barcode.SMS: return R.string.sms;
+            case Barcode.EMAIL: return R.string.email;
+        }
+        return R.string.unknown_barcode_type;
     }
 
-    public void setTypeStrResId(int typeStrResId) {
-        this.typeStrResId = typeStrResId;
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
     }
 
     public int getBarcodeDataParentId() {

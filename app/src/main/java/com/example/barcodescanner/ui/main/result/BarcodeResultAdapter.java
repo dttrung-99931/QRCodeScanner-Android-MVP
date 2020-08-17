@@ -15,7 +15,6 @@ import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.databinding.ItemBarcodeFieldBinding;
 import com.example.barcodescanner.ui.base.BaseViewHolder;
 import com.example.barcodescanner.util.BarcodeActionUtil;
-import com.example.barcodescanner.util.CommonUtil;
 import com.example.barcodescanner.util.ViewUtil;
 
 import static java.lang.Math.max;

@@ -11,7 +11,6 @@ import com.example.barcodescanner.util.CommonUtil;
 import com.google.android.gms.vision.barcode.Barcode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,143 +46,152 @@ public class RelationBarcodeData {
     }
 
     public static RelationBarcodeData fromBarcode(Barcode barcode) {
-        int barcodeTypeResId = -1;
+        int barcodeType = -1;
         List<BarcodeField> barcodeFields = new ArrayList<>();
 
         switch (barcode.valueFormat) {
             case Barcode.TEXT: {
-                barcodeTypeResId = R.string.text;
+                barcodeType = Barcode.TEXT;
                 barcodeFields.add(
-                        new BarcodeField(R.string.text, barcode.rawValue)
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_TEXT, barcode.rawValue)
                 );
                 break;
             }
             case Barcode.EMAIL:{
-                barcodeTypeResId = R.string.email;
+                barcodeType = Barcode.EMAIL;
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.email_address, barcode.email.address),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_ADDRESS,
+                                barcode.email.address),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.email_subject, barcode.email.subject),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_SUBJECT,
+                                barcode.email.subject),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.email_body, barcode.email.body),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_BODY,
+                                barcode.email.body),
                         true
                 );
                 break;
             }
             case Barcode.URL: {
+                barcodeType = Barcode.URL;
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.url, barcode.url.url),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_URL, barcode.url.url),
                         true
                 );
-                barcodeTypeResId = R.string.url;
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.url_title, barcode.url.title),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_TITLE,
+                                barcode.url.title),
                         true
                 );
                 break;
             }
             case Barcode.SMS: {
-                barcodeTypeResId = R.string.sms;
+                barcodeType = Barcode.SMS;
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.sms_phone_num, barcode.sms.phoneNumber),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_PHONE_NUM,
+                                barcode.sms.phoneNumber),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.sms_msg, barcode.sms.message),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_MSG, barcode.sms.message),
                         true
                 );
                 break;
             }
             case Barcode.WIFI: {
-                barcodeTypeResId = R.string.wifi;
+                barcodeType = Barcode.WIFI;
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.wifi_name, barcode.wifi.ssid),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_NAME,
+                                barcode.wifi.ssid),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.wifi_password, barcode.wifi.password),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_PASSWORD,
+                                barcode.wifi.password),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.wifi_encryption_type,
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_ENSCRYPTION_TYPE,
                                 barcode.wifi.encryptionType + ""),
                         true
                 );
                 break;
             }
             case Barcode.PRODUCT: {
-                barcodeTypeResId = R.string.product;
+                barcodeType = Barcode.PRODUCT;
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.text, barcode.rawValue),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_INFO,
+                                barcode.rawValue),
                         true
                 );
                 break;
             }
             case Barcode.PHONE: {
-                barcodeTypeResId = R.string.phone;
+                barcodeType = Barcode.PHONE;
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.phone, barcode.phone.number),
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_PHONE_NUM,
+                                barcode.phone.number),
                         true
                 );
                 break;
             }
             case Barcode.CONTACT_INFO: {
-                barcodeTypeResId = R.string.contact;
+                barcodeType = Barcode.CONTACT_INFO;
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.contact_name,
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_NAME,
                                 barcode.contactInfo.name.formattedName),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.contact_addresses,
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_ADDRESSES,
                                 BarcodeUtil.formatAddresses(barcode.contactInfo.addresses)),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.contact_emails,
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_ADDRESSES,
                                 BarcodeUtil.formatEmails(barcode.contactInfo.emails)),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.contact_organization,
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_ORG,
                                 barcode.contactInfo.organization),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.contact_title,
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_TITLE,
                                 barcode.contactInfo.title),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.contact_phones,
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_PHONE_NUMS,
                                 BarcodeUtil.formatPhones(barcode.contactInfo.phones)),
                         true
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(R.string.contact_urls,
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_URLS,
                                 BarcodeUtil.formatUrls(barcode.contactInfo.urls)),
                         true
                 );
@@ -191,8 +199,8 @@ public class RelationBarcodeData {
             }
         }
 
-        if (barcodeTypeResId != -1) return new RelationBarcodeData(
-                BarcodeData.createWithNoParent(barcodeTypeResId),
+        if (barcodeType != -1) return new RelationBarcodeData(
+                BarcodeData.createWithNoParent(barcodeType),
                 barcodeFields
         );
         CommonUtil.logd("BarcodeData2.fromBarcode(): Undefined barcode type");
@@ -209,7 +217,7 @@ public class RelationBarcodeData {
 
     public String getUrl() {
         for (BarcodeField field : barcodeFields) {
-            if (field.getFieldNameStrResId() == R.string.url)
+            if (field.getFieldNameId() == BarcodeField.FIELD_NAME_ID_URL)
                 return field.getFieldValue();
         }
         return "";
@@ -223,7 +231,7 @@ public class RelationBarcodeData {
 
     public String getPhoneNum() {
         for (BarcodeField field : barcodeFields) {
-            if (field.getFieldNameStrResId() == R.string.phone)
+            if (field.getFieldNameId() == BarcodeField.FIELD_NAME_ID_PHONE_NUM)
                 return field.getFieldValue();
         }
         return "";
