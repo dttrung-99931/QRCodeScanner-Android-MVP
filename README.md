@@ -1,7 +1,7 @@
 # QRCodeScanner-Android-MVP
 ## Features
 <ul>
-  <li><h4>Detect and decode QR codes and Matrix barcode</h4></li>
+  <li><h4>Detect and decode QR code and Matrix barcode</h4></li>
   <li><h4>Do corresponding actions with detected QRCode, like open browser with URL QRCode</h4></li>
   <li><h4>QRCode scanning history</h4></li>
 </ul>
