@@ -31,7 +31,7 @@
         android:paddingStart="@dimen/_5sdp"
         android:paddingVertical="@dimen/_5sdp"
         style="@style/ClickAnimStyle"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/layout_result"

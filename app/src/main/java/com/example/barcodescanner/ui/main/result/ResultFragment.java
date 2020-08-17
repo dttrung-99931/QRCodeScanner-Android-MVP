@@ -18,6 +18,7 @@ import com.example.barcodescanner.databinding.FragmentResultBinding;
 import com.example.barcodescanner.ui.base.BaseDialogFragment;
 import com.example.barcodescanner.ui.main.MainActivity;
 import com.example.barcodescanner.util.BarcodeActionUtil;
+import com.google.android.gms.vision.barcode.Barcode;
 
 /**
  * Created by Trung on 8/7/2020
@@ -105,11 +106,11 @@ public class ResultFragment extends BaseDialogFragment implements ResultPresente
 
     private void setupBtnAction() {
         ImageButton btnMainAction = mBinding.btnAction1;
-        switch (mRelBarcodeData.barcodeData.getTypeStrResId()) {
-            case R.string.text:
+        switch (mRelBarcodeData.barcodeData.getTypeId()) {
+            case Barcode.TEXT:
                 mBinding.btnAction1.setVisibility(View.GONE);
                 break;
-            case R.string.phone:
+            case Barcode.PHONE:
                 setupBtnAddContact();
                 break;
         }

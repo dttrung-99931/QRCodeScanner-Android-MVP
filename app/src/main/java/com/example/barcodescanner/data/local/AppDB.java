@@ -13,7 +13,7 @@ import com.example.barcodescanner.data.local.model.BarcodeField;
  * Created by Trung on 8/12/2020
  */
 @Database(entities = {BarcodeField.class,
-                      BarcodeData.class}, version = 9)
+                      BarcodeData.class}, version = 11)
 public abstract class AppDB extends RoomDatabase {
     public abstract BarcodeDAO getBarcodeDAO();
 

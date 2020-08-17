@@ -21,7 +21,7 @@ public class BarcodeData {
     @PrimaryKey(autoGenerate = true)
     private Long id;
 
-    private int type;
+    private int typeId;
 
     private int barcodeDataParentId;
 
@@ -32,8 +32,8 @@ public class BarcodeData {
         return new BarcodeData(type, ID_NO_PARENT);
     }
 
-    private BarcodeData(int type, int barcodeDataParentId) {
-        this.type = type;
+    private BarcodeData(int typeId, int barcodeDataParentId) {
+        this.typeId = typeId;
         this.barcodeDataParentId = barcodeDataParentId;
         this.createdAt = Calendar.getInstance().getTime();
     }
@@ -58,7 +58,7 @@ public class BarcodeData {
     }
 
     public int getTypeStrResId() {
-        switch (type) {
+        switch (typeId) {
             case Barcode.TEXT: return R.string.text;
             case Barcode.URL: return R.string.url;
             case Barcode.PHONE: return R.string.phone;
@@ -70,12 +70,12 @@ public class BarcodeData {
         return R.string.unknown_barcode_type;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
     }
 
-    public int getType() {
-        return type;
+    public int getTypeId() {
+        return typeId;
     }
 
     public int getBarcodeDataParentId() {

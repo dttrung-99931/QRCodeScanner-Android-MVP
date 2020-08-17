@@ -36,6 +36,7 @@ import com.example.barcodescanner.databinding.FragmentScanBinding;
 import com.example.barcodescanner.ui.base.BaseFragment;
 import com.example.barcodescanner.ui.main.MainActivity;
 import com.example.barcodescanner.ui.main.result.ResultFragment;
+import com.example.barcodescanner.util.CommonUtil;
 import com.example.barcodescanner.util.ViewUtil;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -245,7 +246,6 @@ public class ScanFragment extends BaseFragment implements
     }
 
     private void showDetectedBarcodeResult(RelationBarcodeData relBarcodeData) {
-        mIsShowingResult = true;
         mBinding.btnRefresh.setVisibility(View.VISIBLE);
         mBinding.layoutResult.setVisibility(View.VISIBLE);
 
@@ -315,7 +315,7 @@ public class ScanFragment extends BaseFragment implements
 
     @Override
     public void showBarcodeDetectionResult(Pair<Bitmap, SparseArray<Barcode>> result) {
-        if (result.second == null) return;
+        if (result == null) return;
 
         Barcode barcodeInScanArea = ViewUtil.getOneDetectedBarCodeInScanArea(
                 result.second,
@@ -324,7 +324,11 @@ public class ScanFragment extends BaseFragment implements
                 mBinding.barCodeDetectionView.getHeightScaleFactor()
         );
 
-        if (barcodeInScanArea != null) {
+        /*@Warning: missing checking !mIsShowingResult will cause
+        * show the same detected barcode result multiple times, also insert db*/
+        if (barcodeInScanArea != null && !mIsShowingResult) {
+            mIsShowingResult = true;
+
             RelationBarcodeData relBarcodeData =
                     RelationBarcodeData.fromBarcode(barcodeInScanArea);
 
@@ -345,7 +349,6 @@ public class ScanFragment extends BaseFragment implements
         } else {  // If there is no detected barcode images
             // Close to detect another frame
             mCurAnalyzedImageProxy.close();
-            mBinding.barCodeDetectionView.removeAllAndInvalidate();
         }
 
     }
