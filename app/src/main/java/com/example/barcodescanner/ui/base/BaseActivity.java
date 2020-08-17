@@ -19,11 +19,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.barcodescanner.R;
+import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.util.BarcodeActionUtil;
 
 public class BaseActivity extends AppCompatActivity implements BaseView {
 
     public static final int REQUEST_CODE_CALL_PERMISSION = 10;
+    private static final int REQUEST_CODE_SMS_PERMISSION = 20;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -193,6 +195,18 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
                 phoneNum,
                 getApplicationContext()
         );
+    }
+
+    public void processSendingMsg(RelationBarcodeData relBarcodeData) {
+        String smsPermission = Manifest.permission.SEND_SMS;
+        if (isPermissionGranted(smsPermission)) {
+            BarcodeActionUtil.sendSms(relBarcodeData, getApplicationContext());
+        } else requestPermission(smsPermission, REQUEST_CODE_SMS_PERMISSION,
+                isGranted -> {
+                    if (isGranted)
+                        BarcodeActionUtil.sendSms(relBarcodeData, getApplicationContext());
+                    else showToastMsg(R.string.msg_send_sms_permission);
+                });
     }
 
     public interface RequestPermissionCallBack {

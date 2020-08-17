@@ -167,7 +167,7 @@ public class RelationBarcodeData {
                 );
                 addFieldCheckEmpty(
                         barcodeFields,
-                        new BarcodeField(BarcodeField.FIELD_NAME_ID_ADDRESSES,
+                        new BarcodeField(BarcodeField.FIELD_NAME_ID_EMAILS,
                                 BarcodeUtil.formatEmails(barcode.contactInfo.emails)),
                         true
                 );
@@ -230,10 +230,46 @@ public class RelationBarcodeData {
     }
 
     public String getPhoneNum() {
+        return getFieldValue(BarcodeField.FIELD_NAME_ID_PHONE_NUMS);
+    }
+
+    public String getFieldValue(int fieldNameId) {
         for (BarcodeField field : barcodeFields) {
-            if (field.getFieldNameId() == BarcodeField.FIELD_NAME_ID_PHONE_NUM)
+            if (field.getFieldNameId() == fieldNameId)
                 return field.getFieldValue();
         }
         return "";
+    }
+
+    public String getEmailAddress() {
+        return getFieldValue(BarcodeField.FIELD_NAME_ID_ADDRESS);
+    }
+
+    public String getEmailSubject() {
+        return getFieldValue(BarcodeField.FIELD_NAME_ID_SUBJECT);
+    }
+
+    public String getEmailBody() {
+        return getFieldValue(BarcodeField.FIELD_NAME_ID_BODY);
+    }
+
+    public String getContactPeopleName() {
+        return getFieldValue(BarcodeField.FIELD_NAME_ID_NAME);
+    }
+
+    public String getOrg() {
+        return getFieldValue(BarcodeField.FIELD_NAME_ID_ORG);
+    }
+
+    public String getContactEmails() {
+        return getFieldValue(BarcodeField.FIELD_NAME_ID_EMAILS);
+    }
+
+    public String getSmsPhoneNum() {
+        return getFieldValue(BarcodeField.FIELD_NAME_ID_PHONE_NUM);
+    }
+
+    public String getSmsContent() {
+        return getFieldValue(BarcodeField.FIELD_NAME_ID_MSG);
     }
 }

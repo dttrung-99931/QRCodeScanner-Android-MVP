@@ -30,6 +30,7 @@ public class BarcodeField {
     public static final int FIELD_NAME_ID_PHONE_NUMS = 14;
     public static final int FIELD_NAME_ID_URLS = 16;
     public static final int FIELD_NAME_ID_INFO = 17;
+    public static final int FIELD_NAME_ID_EMAILS = 18;
 
     @PrimaryKey(autoGenerate = true)
     private Long id;
@@ -89,6 +90,7 @@ public class BarcodeField {
             case FIELD_NAME_ID_PHONE_NUMS: return R.string.phone_nums;
             case FIELD_NAME_ID_URLS: return R.string.urls;
             case FIELD_NAME_ID_INFO: return R.string.information;
+            case FIELD_NAME_ID_EMAILS: return R.string.emails;
         }
         return R.string.unknown;
     }

@@ -23,7 +23,7 @@ public class BasePresenter<T extends BaseView>{
     }
 
     public void onDetached() {
-        if (mView != null) mView = null;
+        mView = null;
         mDisposables.dispose();
         mDisposables = null;
     }
@@ -69,5 +69,11 @@ public class BasePresenter<T extends BaseView>{
 
     protected void addDisposable(Disposable disposable) {
         mDisposables.add(disposable);
+    }
+
+    protected void updateUI(Runnable update){
+        if (getView() != null) {
+            update.run();
+        } else CommonUtil.logd("BasePresenter Update detached View");
     }
 }

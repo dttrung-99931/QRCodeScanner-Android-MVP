@@ -48,7 +48,7 @@ class ScanPresenter extends BasePresenter<ScanPresenter.View> {
         addDisposable(
                 setupComputationRX(result)
                 .subscribe((bitmapSparseArrayPair, throwable) -> {
-                    getView().showBarcodeDetectionResult(bitmapSparseArrayPair);
+                    updateUI(() -> getView().showBarcodeDetectionResult(bitmapSparseArrayPair));
                 })
         );
     }
