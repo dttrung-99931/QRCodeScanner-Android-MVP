@@ -13,12 +13,14 @@ import android.media.Image;
 import android.util.Log;
 
 import com.example.barcodescanner.R;
+import com.example.barcodescanner.data.local.model.BarcodeField;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Trung on 8/6/2020
@@ -175,13 +177,6 @@ public class CommonUtil {
 //        return barcodeFields;
 //    }
 
-    public static void copyToClipBoard(Context context, CharSequence text) {
-        ClipboardManager clipboard = (ClipboardManager)
-                context.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Copy", text);
-        clipboard.setPrimaryClip(clip);
-    }
-
     public static boolean isCurrentDate(Date date) {
         Date curDate = Calendar.getInstance().getTime();
         return equalsDate(date, curDate);
@@ -192,4 +187,5 @@ public class CommonUtil {
                 date2.getMonth() == date1.getMonth() &&
                 date2.getDay() == date1.getDay();
     }
+
 }

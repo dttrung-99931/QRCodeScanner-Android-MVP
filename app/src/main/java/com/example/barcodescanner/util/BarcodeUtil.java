@@ -6,9 +6,12 @@ import android.media.Image;
 import android.util.Pair;
 import android.util.SparseArray;
 
+import com.example.barcodescanner.data.local.model.BarcodeField;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+
+import java.util.List;
 
 import io.reactivex.Single;
 
@@ -55,6 +58,20 @@ public abstract class BarcodeUtil {
             SparseArray<Barcode> detectedBarcodes =
                     mBarCodeDetector.detect(frame);
             emitter.onSuccess(new Pair<>(bitmap, detectedBarcodes));
+        });
+    }
+
+    public static String formatBarcodeFields(BarcodeField []barcodeFields) {
+        return format(barcodeFields, new BarcodeDataConverter<BarcodeField>() {
+            @Override
+            public String toString(BarcodeField barcodeField) {
+                return barcodeField.getFieldValue();
+            }
+
+            @Override
+            public BarcodeField fromString(String str) {
+                return null;
+            }
         });
     }
 

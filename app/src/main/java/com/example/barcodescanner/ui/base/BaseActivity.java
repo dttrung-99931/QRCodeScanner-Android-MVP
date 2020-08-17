@@ -1,8 +1,10 @@
 package com.example.barcodescanner.ui.base;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -11,13 +13,17 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.barcodescanner.R;
+import com.example.barcodescanner.util.BarcodeActionUtil;
 
 public class BaseActivity extends AppCompatActivity implements BaseView {
+
+    public static final int REQUEST_CODE_CALL_PERMISSION = 10;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -160,5 +166,61 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
 
     public void hideProgressDialog() {
 
+    }
+
+    public boolean isPermissionGranted(String permission) {
+        return checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void processMakingCall(String phoneNum) {
+        if (getBaseActivity().isPermissionGranted(Manifest.permission.CALL_PHONE)) {
+            makeCall(phoneNum);
+        } else {
+            getBaseActivity().requestPermission(
+                    Manifest.permission.CALL_PHONE,
+                    BaseActivity.REQUEST_CODE_CALL_PERMISSION,
+                    isGranted -> {
+                        if (isGranted) {
+                            makeCall(phoneNum);
+                        } else showToastMsg(R.string.msg_call_permission_required);
+                    }
+            );
+        }
+    }
+
+    private void makeCall(String phoneNum) {
+        BarcodeActionUtil.makeCall(
+                phoneNum,
+                getApplicationContext()
+        );
+    }
+
+    public interface RequestPermissionCallBack {
+        public void onResult(boolean isGranted);
+    }
+
+    private RequestPermissionCallBack mCurRequestPermissionCallBack;
+    private int mCurRequestPermissionCode;
+
+    public void requestPermission(
+            String permission, int requestCode,
+            RequestPermissionCallBack callBack
+    ) {
+        mCurRequestPermissionCallBack = callBack;
+        mCurRequestPermissionCode = requestCode;
+        requestPermissions(new String[]{permission}, requestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == mCurRequestPermissionCode) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mCurRequestPermissionCallBack.onResult(true);
+            } else {
+                mCurRequestPermissionCallBack.onResult(false);
+            }
+            mCurRequestPermissionCallBack = null;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

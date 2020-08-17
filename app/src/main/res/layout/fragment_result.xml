@@ -4,6 +4,35 @@
     android:layout_height="match_parent"
     android:background="@drawable/shape_dialog_result">
 
+    <ImageButton
+        android:id="@+id/btnAction1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:src="@drawable/ic_add_contact"
+        android:background="@null"
+        android:paddingEnd="@dimen/_20sdp"
+        android:paddingStart="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_5sdp"
+        style="@style/ClickAnimStyle"/>
+
+    <ImageButton
+        android:id="@+id/btnAction2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@id/btnAction1"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:src="@drawable/ic_call"
+        android:background="@null"
+        android:paddingEnd="@dimen/_8sdp"
+        android:paddingStart="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_5sdp"
+        style="@style/ClickAnimStyle"
+        android:visibility="visible" />
+
     <LinearLayout
         android:id="@+id/layout_result"
         android:layout_width="@dimen/_310sdp"
@@ -31,5 +60,4 @@
             android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
-
 </RelativeLayout>

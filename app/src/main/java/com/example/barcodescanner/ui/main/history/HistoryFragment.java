@@ -63,6 +63,7 @@ public class HistoryFragment extends BaseFragment implements HistoryPresenter.Vi
         mBarcodeHistoryAdapter.setChildFragmentManager(getChildFragmentManager());
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
         mBinding.recyclerView.setLayoutManager(layoutManager);
         mBinding.recyclerView.setAdapter(mBarcodeHistoryAdapter);
     }

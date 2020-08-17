@@ -11,6 +11,7 @@ import com.example.barcodescanner.util.CommonUtil;
 import com.google.android.gms.vision.barcode.Barcode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -133,6 +134,15 @@ public class RelationBarcodeData {
                 );
                 break;
             }
+            case Barcode.PHONE: {
+                barcodeTypeResId = R.string.phone;
+                addFieldCheckEmpty(
+                        barcodeFields,
+                        new BarcodeField(R.string.phone, barcode.phone.number),
+                        true
+                );
+                break;
+            }
             case Barcode.CONTACT_INFO: {
                 barcodeTypeResId = R.string.contact;
                 addFieldCheckEmpty(
@@ -195,5 +205,27 @@ public class RelationBarcodeData {
         if (!ignoreEmpty || !field.getFieldValue().isEmpty()) {
             barcodeFields.add(field);
         }
+    }
+
+    public String getUrl() {
+        for (BarcodeField field : barcodeFields) {
+            if (field.getFieldNameStrResId() == R.string.url)
+                return field.getFieldValue();
+        }
+        return "";
+    }
+
+    public String getRawText() {
+        return BarcodeUtil.formatBarcodeFields(
+                barcodeFields.toArray(new BarcodeField[0])
+        );
+    }
+
+    public String getPhoneNum() {
+        for (BarcodeField field : barcodeFields) {
+            if (field.getFieldNameStrResId() == R.string.phone)
+                return field.getFieldValue();
+        }
+        return "";
     }
 }

@@ -5,6 +5,8 @@
     <!--  Use both back and front cameras  -->
     <uses-feature android:name="android.hardware.camera.any"/>
 
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/logo"

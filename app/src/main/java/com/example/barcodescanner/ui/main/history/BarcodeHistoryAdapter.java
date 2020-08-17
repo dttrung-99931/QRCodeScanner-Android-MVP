@@ -12,8 +12,10 @@ import com.example.barcodescanner.data.local.DateConverter;
 import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.databinding.ItemBarcodeHistoryBinding;
 import com.example.barcodescanner.databinding.ItemDateBinding;
+import com.example.barcodescanner.ui.base.BaseActivity;
 import com.example.barcodescanner.ui.base.BaseViewHolder;
 import com.example.barcodescanner.ui.main.result.ResultFragment;
+import com.example.barcodescanner.util.BarcodeActionUtil;
 import com.example.barcodescanner.util.CommonUtil;
 
 import java.util.ArrayList;
@@ -146,7 +148,13 @@ public class BarcodeHistoryAdapter extends
             mHistoryBinding.tvFieldValue.setOnClickListener(v -> {
                 ResultFragment.show(relBarcodeData, mChildFragmentManager);
             });
+
+            BarcodeActionUtil.setupBtnMainAction(
+                    mHistoryBinding.btnAction1,
+                    relBarcodeData,
+                    (BaseActivity) itemView.getContext());
         }
+
     }
 
 }

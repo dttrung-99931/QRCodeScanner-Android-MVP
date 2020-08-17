@@ -400,7 +400,9 @@ public class ScanFragment extends BaseFragment implements
     public void resumeDetecting() {
         if (!mIsShowingResult) {
             mIsStopScanning = false;
-            mCurAnalyzedImageProxy.close();
+            if (mCurAnalyzedImageProxy != null) {
+                mCurAnalyzedImageProxy.close();
+            }
         }
     }
 }

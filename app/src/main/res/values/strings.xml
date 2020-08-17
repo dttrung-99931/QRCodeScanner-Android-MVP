@@ -39,4 +39,5 @@
     <string name="format_not_support">Barcode format not supported</string>
     <string name="wifi_encryption_type">Encryption Type</string>
     <string name="today">Today</string>
+    <string name="msg_call_permission_required">Call permission required</string>
 </resources>

@@ -14,6 +14,7 @@ import com.example.barcodescanner.data.local.model.BarcodeField;
 import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.databinding.ItemBarcodeFieldBinding;
 import com.example.barcodescanner.ui.base.BaseViewHolder;
+import com.example.barcodescanner.util.BarcodeActionUtil;
 import com.example.barcodescanner.util.CommonUtil;
 import com.example.barcodescanner.util.ViewUtil;
 
@@ -69,10 +70,12 @@ public class BarcodeResultAdapter extends RecyclerView.Adapter<BarcodeResultAdap
             }
             mBinding.tvFieldValue.setText(field.getFieldValue());
             mBinding.btnCopy.setOnClickListener(v -> {
-                Context context = v.getContext();
-                CommonUtil.copyToClipBoard(context,
-                        mBinding.tvFieldValue.getText());
-                Toast.makeText(context, context.getString(R.string.copied),
+                Context appContext = v.getContext().getApplicationContext();
+                BarcodeActionUtil.copyToClipBoard(
+                        mBinding.tvFieldValue.getText(),
+                        appContext
+                );
+                Toast.makeText(appContext, appContext.getString(R.string.copied),
                         Toast.LENGTH_SHORT).show();
             });
         }
