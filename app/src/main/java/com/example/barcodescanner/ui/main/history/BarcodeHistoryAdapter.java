@@ -131,9 +131,11 @@ public class BarcodeHistoryAdapter extends
             mHistoryBinding.tvFieldName.setText(
                     relBarcodeData.barcodeData.getTypeStrResId()
             );
-            mHistoryBinding.tvFieldValue.setText(
-                    relBarcodeData.barcodeFields.get(0).getFieldValue()
-            );
+            if (relBarcodeData.barcodeFields.size() > 0) {
+                mHistoryBinding.tvFieldValue.setText(
+                        relBarcodeData.barcodeFields.get(0).getFieldValue()
+                );
+            }
             mHistoryBinding.tvTime.setText(
                     DateConverter.format(
                             relBarcodeData.barcodeData.getCreatedAt(),
