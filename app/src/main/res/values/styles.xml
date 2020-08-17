@@ -28,4 +28,15 @@
         <item name="android:colorBackground">#ff0</item>
     </style>
 
+    <style name="Switch" parent="Theme.AppCompat.Light">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">@color/darkPurple</item>
+
+        <!-- inactive thumb color -->
+<!--        <item name="colorSwitchThumbNormal">#f1f1f1-->
+<!--        </item>-->
+
+        <!-- inactive track color (30% transparency) -->
+<!--        <item name="android:colorForeground">#A3D9BDF3</item>-->
+    </style>
 </resources>

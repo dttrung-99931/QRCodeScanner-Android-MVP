@@ -6,7 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -207,6 +210,17 @@ public class BaseActivity extends AppCompatActivity implements BaseView {
                         BarcodeActionUtil.sendSms(relBarcodeData, getApplicationContext());
                     else showToastMsg(R.string.msg_send_sms_permission);
                 });
+    }
+
+    public void vibrate(int timeInMilis) {
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= 26) {
+            VibrationEffect effect = VibrationEffect
+                    .createOneShot(timeInMilis, VibrationEffect.DEFAULT_AMPLITUDE);
+            vibrator.vibrate(effect);
+        } else {
+            vibrator.vibrate(timeInMilis);
+        }
     }
 
     public interface RequestPermissionCallBack {

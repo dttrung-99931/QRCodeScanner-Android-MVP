@@ -5,4 +5,5 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="background">#F4E0FF</color>
     <color name="backgroundScanFrame">#A3D9BDF3</color>
+    <color name="darkPurple">#D8886BCD</color>
 </resources>

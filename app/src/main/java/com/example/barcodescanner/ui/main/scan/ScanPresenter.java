@@ -1,6 +1,5 @@
 package com.example.barcodescanner.ui.main.scan;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.Image;
@@ -9,10 +8,11 @@ import android.util.SparseArray;
 
 import com.example.barcodescanner.data.local.AppDB;
 import com.example.barcodescanner.data.local.model.RelationBarcodeData;
+import com.example.barcodescanner.data.local.pref.Pref;
+import com.example.barcodescanner.data.local.pref.Settings;
 import com.example.barcodescanner.ui.base.BasePresenter;
 import com.example.barcodescanner.ui.base.BaseView;
 import com.example.barcodescanner.util.BarcodeUtil;
-import com.example.barcodescanner.util.CommonUtil;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
@@ -48,7 +48,9 @@ class ScanPresenter extends BasePresenter<ScanPresenter.View> {
         addDisposable(
                 setupComputationRX(result)
                 .subscribe((bitmapSparseArrayPair, throwable) -> {
-                    updateUI(() -> getView().showBarcodeDetectionResult(bitmapSparseArrayPair));
+                    updateUI(() -> getView().showBarcodeDetectionResult(
+                            bitmapSparseArrayPair, Pref.getSettings()
+                    ));
                 })
         );
     }
@@ -65,7 +67,7 @@ class ScanPresenter extends BasePresenter<ScanPresenter.View> {
 
     public interface View extends BaseView {
 
-        void showBarcodeDetectionResult(Pair<Bitmap, SparseArray<Barcode>> barcodes);
+        void showBarcodeDetectionResult(Pair<Bitmap, SparseArray<Barcode>> barcodes, Settings settings);
 
         void notifyRefreshHistoryFragment();
     }

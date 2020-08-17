@@ -32,11 +32,11 @@ import androidx.core.content.ContextCompat;
 
 import com.example.barcodescanner.R;
 import com.example.barcodescanner.data.local.model.RelationBarcodeData;
+import com.example.barcodescanner.data.local.pref.Settings;
 import com.example.barcodescanner.databinding.FragmentScanBinding;
 import com.example.barcodescanner.ui.base.BaseFragment;
 import com.example.barcodescanner.ui.main.MainActivity;
 import com.example.barcodescanner.ui.main.result.ResultFragment;
-import com.example.barcodescanner.util.CommonUtil;
 import com.example.barcodescanner.util.ViewUtil;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -314,7 +314,8 @@ public class ScanFragment extends BaseFragment implements
     }
 
     @Override
-    public void showBarcodeDetectionResult(Pair<Bitmap, SparseArray<Barcode>> result) {
+    public void showBarcodeDetectionResult(Pair<Bitmap, SparseArray<Barcode>> result,
+                                           Settings settings) {
         if (result == null) return;
 
         Barcode barcodeInScanArea = ViewUtil.getOneDetectedBarCodeInScanArea(
@@ -328,7 +329,7 @@ public class ScanFragment extends BaseFragment implements
         * show the same detected barcode result multiple times, also insert db*/
         if (barcodeInScanArea != null && !mIsShowingResult) {
             mIsShowingResult = true;
-
+            showEffectsOnBarcodeResult(settings);
             RelationBarcodeData relBarcodeData =
                     RelationBarcodeData.fromBarcode(barcodeInScanArea);
 
@@ -351,6 +352,12 @@ public class ScanFragment extends BaseFragment implements
             mCurAnalyzedImageProxy.close();
         }
 
+    }
+
+    private void showEffectsOnBarcodeResult(Settings settings) {
+        if (settings.isVibrationEnabled()) {
+            getBaseActivity().vibrate(100);
+        }
     }
 
     @Override
