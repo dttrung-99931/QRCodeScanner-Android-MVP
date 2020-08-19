@@ -9,12 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView;
 import com.example.barcodescanner.R;
 import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.databinding.FragmentHistoryBinding;
 import com.example.barcodescanner.ui.base.BaseFragment;
 import com.example.barcodescanner.ui.base.SpacingDecorator;
 import com.example.barcodescanner.util.ViewUtil;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -24,7 +27,7 @@ import java.util.List;
 public class HistoryFragment extends BaseFragment implements HistoryPresenter.View {
 
     FragmentHistoryBinding mBinding;
-    BarcodeHistoryAdapter mBarcodeHistoryAdapter;
+    BarcodeHistoryAdapter2 mBarcodeHistoryAdapter;
     HistoryPresenter mPresenter;
 
     @Nullable
@@ -52,25 +55,57 @@ public class HistoryFragment extends BaseFragment implements HistoryPresenter.Vi
     }
 
     private void setupView() {
-        setupRecyclerViewBarcodeFields();
+        setupRecyclerViewBarcodeHistories();
     }
 
-    private void setupRecyclerViewBarcodeFields() {
-        mBarcodeHistoryAdapter = new BarcodeHistoryAdapter();
-        mBinding.recyclerView.addItemDecoration(
+    private void setupRecyclerViewBarcodeHistories() {
+        mBarcodeHistoryAdapter = new BarcodeHistoryAdapter2();
+        DragDropSwipeRecyclerView recyclerView = mBinding.recyclerView;
+
+        recyclerView.addItemDecoration(
                 new SpacingDecorator(ViewUtil.sdpToPx(getResources(), R.dimen._3sdp))
         );
         mBarcodeHistoryAdapter.setChildFragmentManager(getChildFragmentManager());
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
-        mBinding.recyclerView.setLayoutManager(layoutManager);
-        mBinding.recyclerView.setAdapter(mBarcodeHistoryAdapter);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mBarcodeHistoryAdapter);
+
+        recyclerView.setSwipeListener((removedPos, swipeDirection, o) -> {
+            mBarcodeHistoryAdapter.backupRemovedItem(removedPos);
+            showCancelRemoveSnakeBar(
+                    mBarcodeHistoryAdapter.getDataSet().get(removedPos)
+            );
+            if (removedPos > 0) {
+                mBarcodeHistoryAdapter.notifyItemChanged(removedPos - 1);
+            }
+            return false;
+        });
+        recyclerView.disableDragDirection(DragDropSwipeRecyclerView.ListOrientation.DirectionFlag.DOWN);
+        recyclerView.disableDragDirection(DragDropSwipeRecyclerView.ListOrientation.DirectionFlag.UP);
+    }
+
+    private void showCancelRemoveSnakeBar(RelationBarcodeData removedItem) {
+        Snackbar.make(mBinding.getRoot(),
+                R.string.cancel_remove, BaseTransientBottomBar.LENGTH_SHORT)
+                .setAction(R.string.cancel, v -> {
+                    mBarcodeHistoryAdapter.restoreRemovedItem();
+                })
+                .addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        if (!mBarcodeHistoryAdapter.isRemoveCanceled()) {
+                            mPresenter.deleteBarcodeData(removedItem);
+                        }
+                    }
+                })
+                .show();
     }
 
     @Override
     public void showBarcodeHistories(List<RelationBarcodeData> relBarcodeDataList) {
-        mBarcodeHistoryAdapter.setRelBarcodeDataList(relBarcodeDataList);
+        mBarcodeHistoryAdapter.setDataSet(relBarcodeDataList);
         mBarcodeHistoryAdapter.notifyDataSetChanged();
         mBinding.recyclerView.scrollToPosition(mBarcodeHistoryAdapter.getItemCount()-1);
     }

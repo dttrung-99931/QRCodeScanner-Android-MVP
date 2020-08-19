@@ -1,6 +1,7 @@
 package com.example.barcodescanner.data.local;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -42,4 +43,7 @@ public abstract class BarcodeDAO{
             emitter.onComplete();
         });
     }
+
+    @Delete
+    public abstract Completable deleteBarcodeData(BarcodeData barcodeData);
 }

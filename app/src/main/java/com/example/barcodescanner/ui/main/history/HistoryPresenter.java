@@ -1,5 +1,6 @@
 package com.example.barcodescanner.ui.main.history;
 
+import com.example.barcodescanner.App;
 import com.example.barcodescanner.data.local.AppDB;
 import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.ui.base.BasePresenter;
@@ -8,6 +9,7 @@ import com.example.barcodescanner.util.CommonUtil;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 /**
@@ -33,6 +35,13 @@ class HistoryPresenter extends BasePresenter<HistoryPresenter.View> {
                 })
         );
 
+    }
+
+    public void deleteBarcodeData(RelationBarcodeData relationBarcodeData) {
+        Completable deleteResult = AppDB.barcodeDAO()
+                .deleteBarcodeData(relationBarcodeData.barcodeData);
+
+        setupRX(deleteResult).subscribe();
     }
 
     public interface View extends BaseView {

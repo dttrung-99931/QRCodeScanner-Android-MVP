@@ -50,4 +50,6 @@
     <string name="connected_with">Connected with</string>
     <string name="failed_to_connect_with">"Failed to connect with"</string>
     <string name="connecting">Connecting</string>
+    <string name="cancel_remove">Cancel remove</string>
+    <string name="cancel">Cancel</string>
 </resources>

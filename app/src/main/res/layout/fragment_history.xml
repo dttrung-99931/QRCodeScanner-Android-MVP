@@ -3,10 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.main.MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:behind_swiped_item_icon="@drawable/ic_delete"
+        app:behind_swiped_item_icon_margin="@dimen/_10sdp"
+        />
+<!--    app:behind_swiped_item_bg_color="#BA5274"-->
 </RelativeLayout>

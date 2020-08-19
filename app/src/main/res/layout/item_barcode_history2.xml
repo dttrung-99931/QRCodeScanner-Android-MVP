@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/layoutResult">
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1/9/2020"
+        android:gravity="center_horizontal"
+        android:textColor="#C6886BCD"
+        android:textSize="@dimen/_13ssp"
+        android:visibility="gone"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardviewResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_below="@id/tvDate">
+
+        <RelativeLayout
+            android:id="@+id/layoutCardViewResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FAF2FF"
+            android:paddingBottom="@dimen/_6sdp"
+            style="@style/ClickAnimStyle">
+
+            <ImageButton
+                android:id="@+id/btnAction1"
+                style="@style/ClickAnimStyle"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:background="@null"
+                android:padding="@dimen/_5sdp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_browser" />
+
+            <TextView
+                android:id="@+id/tvFieldName"
+                android:layout_width="@dimen/_245sdp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:text="Email"
+                android:textColor="#886BCD"
+                android:textSize="@dimen/_17ssp"
+                android:textStyle="bold" />
+
+            <ScrollView
+                android:id="@+id/scrollViewResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvFieldName">
+
+                <TextView
+                    android:id="@+id/tvFieldValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_30sdp"
+                    android:maxHeight="@dimen/_490sdp"
+                    android:paddingStart="@dimen/_25sdp"
+                    android:paddingBottom="@dimen/_2sdp"
+                    android:text="@string/example_result"
+                    android:textColor="#886BCD"
+                    android:textSize="@dimen/_16ssp" />
+
+            </ScrollView>
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_14sdp"
+                android:text="12/6/2019 3:20"
+                android:textColor="#C6886BCD"
+                android:textSize="@dimen/_11ssp"
+                android:layout_below="@id/scrollViewResult"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
