@@ -46,4 +46,8 @@
     <string name="send_email">Send email</string>
     <string name="msg_send_sms_permission">Send sms permission required</string>
     <string name="vibration">Vibration</string>
+    <string name="suggest_turn_on_wifi">Please, turn on wifi first</string>
+    <string name="connected_with">Connected with</string>
+    <string name="failed_to_connect_with">"Failed to connect with"</string>
+    <string name="connecting">Connecting</string>
 </resources>

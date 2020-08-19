@@ -66,6 +66,7 @@ public class BarcodeData {
             case Barcode.CONTACT_INFO: return R.string.contact;
             case Barcode.SMS: return R.string.sms;
             case Barcode.EMAIL: return R.string.email;
+            case Barcode.WIFI: return R.string.wifi;
         }
         return R.string.unknown_barcode_type;
     }

@@ -1,7 +1,5 @@
 package com.example.barcodescanner.util;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,17 +8,17 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.example.barcodescanner.R;
-import com.example.barcodescanner.data.local.model.BarcodeField;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Trung on 8/6/2020
@@ -188,4 +186,15 @@ public class CommonUtil {
                 date2.getDay() == date1.getDay();
     }
 
+    public static boolean isWifiDisconnected(Context context) {
+        return getWifiState(context) ==  NetworkInfo.DetailedState.DISCONNECTED;
+    }
+
+    public static NetworkInfo.DetailedState getWifiState(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = connectivityManager
+                .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return info.getDetailedState();
+    }
 }

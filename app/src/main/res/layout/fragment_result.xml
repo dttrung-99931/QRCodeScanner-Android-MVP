@@ -11,7 +11,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="@dimen/_7sdp"
-        android:src="@drawable/ic_add_contact"
+        android:src="@drawable/ic_wifi"
         android:background="@null"
         android:paddingEnd="@dimen/_20sdp"
         android:paddingStart="@dimen/_5sdp"

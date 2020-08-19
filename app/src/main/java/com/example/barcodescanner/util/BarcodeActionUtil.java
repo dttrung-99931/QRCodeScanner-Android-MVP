@@ -6,6 +6,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageButton;
@@ -14,9 +17,12 @@ import android.widget.Toast;
 import androidx.core.app.ShareCompat;
 
 import com.example.barcodescanner.R;
+import com.example.barcodescanner.data.local.model.BarcodeField;
 import com.example.barcodescanner.data.local.model.RelationBarcodeData;
 import com.example.barcodescanner.ui.base.BaseActivity;
 import com.google.android.gms.vision.barcode.Barcode;
+
+import java.util.List;
 
 /**
  * Created by Trung on 8/16/2020
@@ -89,6 +95,13 @@ public class BarcodeActionUtil {
                 });
                 break;
             }
+            case Barcode.WIFI: {
+                btnAction.setImageResource(R.drawable.ic_wifi);
+                btnAction.setOnClickListener(v -> {
+                    connectWifi(relBarcodeData, appContext);
+                });
+                break;
+            }
 
         }
 
@@ -96,6 +109,72 @@ public class BarcodeActionUtil {
             btnAction.setImageResource(btnImgResId);
             btnAction.setOnClickListener(onClickListener);
         }
+    }
+
+    private static void connectWifi(RelationBarcodeData relBarcodeData, Context appContext) {
+        WifiConfiguration wifiConfig = createWifiConfig(relBarcodeData);
+
+        // Add wifi config
+        WifiManager wifiManager = (WifiManager) appContext
+                .getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        // Turn on wifi
+        if (!wifiManager.isWifiEnabled()){
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                wifiManager.setWifiEnabled(true);
+                while (!wifiManager.isWifiEnabled()){}
+            } else {
+                Toast.makeText(appContext, R.string.suggest_turn_on_wifi,
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        wifiManager.addNetwork(wifiConfig);
+
+        // Active the wifi
+        List<WifiConfiguration> wifiConfigurations = wifiManager.getConfiguredNetworks();
+        for (WifiConfiguration configuration : wifiConfigurations) {
+            if (configuration.SSID != null && configuration.SSID.equals(wifiConfig.SSID)){
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(configuration.networkId, true);
+                wifiManager.reconnect();
+                openWifiSettings(appContext);
+                break;
+            }
+        }
+    }
+
+    private static void openWifiSettings(Context appContext) {
+        appContext.startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
+    }
+
+    private static WifiConfiguration createWifiConfig(RelationBarcodeData relBarcodeData) {
+        String ssid = relBarcodeData.getFieldValue(BarcodeField.FIELD_NAME_ID_NAME);
+        String password = relBarcodeData.getFieldValue(BarcodeField.FIELD_NAME_ID_PASSWORD);
+        int encryptionType = Integer.parseInt(
+                relBarcodeData.getFieldValue(BarcodeField.FIELD_NAME_ID_ENSCRYPTION_TYPE)
+        );
+
+        WifiConfiguration wifiConfig = new WifiConfiguration();
+        wifiConfig.SSID = String.format("\"%s\"", ssid);
+
+        // Setup wifi config
+        // WPA or WPA2
+        if (encryptionType == 2) {
+            wifiConfig.preSharedKey = String.format("\"%s\"", password);
+        }
+        // WEP
+        else if (encryptionType == 3) {
+            wifiConfig.wepKeys[0] = String.format("\"%s\"", password);
+            wifiConfig.wepTxKeyIndex = 0;
+            wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            wifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+        }
+        // OPEN wifi
+        else {
+            wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        }
+        return wifiConfig;
     }
 
     private static void sendEmail(RelationBarcodeData relBarcodeData, BaseActivity baseActivity) {

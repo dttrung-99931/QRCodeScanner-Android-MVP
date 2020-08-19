@@ -40,8 +40,11 @@ import com.example.barcodescanner.ui.main.result.ResultFragment;
 import com.example.barcodescanner.util.ViewUtil;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
 
 import java.util.concurrent.ExecutionException;
 
