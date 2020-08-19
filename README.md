@@ -1,4 +1,17 @@
 # QRCodeScanner-Android-MVP
+## Screenshots
+<p>
+   <a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/pandahacker9x/QRCodeScanner-Android-MVP/master/snapshots/scan.jpg">
+      <img src="https://raw.githubusercontent.com/pandahacker9x/QRCodeScanner-Android-MVP/master/snapshots/scan.jpg" alt="Scan" title="Scan" style="max-width:100%">
+   </a>
+   <a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/pandahacker9x/QRCodeScanner-Android-MVP/master/snapshots/history.jpg">
+      <img src="https://raw.githubusercontent.com/pandahacker9x/QRCodeScanner-Android-MVP/master/snapshots/history.jpg" alt="History" title="Login" style="max-width:100%">
+   </a>
+   <a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/pandahacker9x/QRCodeScanner-Android-MVP/master/snapshots/settings.jpg">
+      <img src="https://raw.githubusercontent.com/pandahacker9x/QRCodeScanner-Android-MVP/master/snapshots/settings.jpg" alt="Settings" title="Login" style="max-width:100%">
+   </a>
+</p>
+
 ## Features
 <ul>
   <li><h4>Detect and decode QR code and Matrix barcode</h4></li>
